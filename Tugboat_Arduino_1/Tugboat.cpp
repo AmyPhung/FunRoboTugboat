@@ -6,6 +6,8 @@ Tugboat::Tugboat()
 }
 
 void Tugboat::init() {
+  sensors.init();
+  
   propellor.attach(propellorPin);
   propellor.writeMicroseconds(1500);
   rudder.attach(rudderPin);
@@ -14,7 +16,7 @@ void Tugboat::init() {
 
 void Tugboat::update() {
   //TODO: update state, commands, sensor data etc
-  //sensors.update()
+  sensors.update();
   //(to get data, sensors.ir1.data
   //              sensors.ir4.heading
 }

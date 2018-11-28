@@ -31,37 +31,15 @@
   * 
   */
 
-//#include "IR.h"
-//#include "Sonar.h"
-//#include "Pixycam.h"
 
 #include "Tugboat.h"
+#include "Sensors.h"
 
+#define PROPELLORPIN 6;
+#define RUDDERPIN 3;
 
-//#define IR0PIN 0
-//#define IR1PIN 1
-//#define IR2PIN 2
-//#define IR3PIN 3
-//#define IR4PIN 4
-//#define IR5PIN 5
-//
-//#define SONAR0TRIGPIN 13
-//#define SONAR0ECHOPIN 13
-//
-//#define PROPELLORPIN 6;
-//#define RUDDERPIN 3;
-
-//IR ir_0;
-//IR ir_1;
-//IR ir_2;
-//IR ir_3;
-//IR ir_4;
-//IR ir_5;
-
-//Sonar sonar_0;
 
 Tugboat tugboat;
-
 
 // TODO: trim this down if possible
 boolean realTimeRunStop = true;   //create a name for real time control loop flag
@@ -75,16 +53,7 @@ const long controlLoopInterval = 1000; //create a name for control loop cycle ti
 
 void setup(){
   Serial.begin(9600);
-  //ir_0.init();
-  //ir_1.init();
-  //ir_2.init();
-  //ir_3.init();
-  //ir_4.init();
-  //ir_5.init();
-//
-//  sonar_0.init();
-//  sonar_0.trigPin = SONAR0TRIGPIN;
-//  sonar_0.echoPin = SONAR0ECHOPIN;
+  tugboat.init();
 }
 
 void loop() {
@@ -102,21 +71,14 @@ void loop() {
     if (newLoopTime - oldLoopTime >= controlLoopInterval) { // if true run flight code
       oldLoopTime = newLoopTime;          // reset time stamp
 
-      // TODO: import sensor data from different arduinos here (
-      // sensors.update()
-      // tugboat.update(sensors) // Sensors is a custom library that defines sensor layout on our particular boat
+      tugboat.update(); // also updates sensors
+      tugboat.sensors.print();
+      // TODO: Put data collection on a different arduino - figure out how this data will come in (thoughts: if pin == -1, use data from serial - else use pin)
       
-      tugboat.update(); // Pass in sensor data here
+      // Sensors is a custom library that defines sensor layout on our particular boat
+      
       tugboat.move();    
     }
-
-
-  
-  //ir_0.update();
-  //ir_0.print();
-
-//  sonar_0.update();
-//  sonar_0.print();
   }
 }
 

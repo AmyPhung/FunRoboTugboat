@@ -11,7 +11,7 @@ class Sonar
     void update();
     void print();
 
-    int trigPin = 0; // Set default to 0 
+    //int trigPin = 0; // Set default to 0  For now, we won't use this - may need if interference becomes an issue
     int echoPin = 0;
     int x_offset = 0; // In cm
     int y_offset = 0;

@@ -8,7 +8,7 @@ Sonar::Sonar()
 
 void Sonar::init()
 {
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  //pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
 }
 
