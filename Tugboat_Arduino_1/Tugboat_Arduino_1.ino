@@ -26,22 +26,30 @@
   * update documentation for all things (docstrings + actual documentation)
   * wire everything (solder stuff)
   * 
+  * put IR, Pixycam, Sonar into separate folder (separate libraries for each sensor, not platform-specific)
+  * This folder should only have this file, tugboat, and sensors (all platform-specific)
+  * 
   */
 
-#include "IR.h"
-#include "Sonar.h"
-#include "Pixycam.h"
+//#include "IR.h"
+//#include "Sonar.h"
+//#include "Pixycam.h"
+
+#include "Tugboat.h"
 
 
-#define IR0PIN 0
-#define IR1PIN 1
-#define IR2PIN 2
-#define IR3PIN 3
-#define IR4PIN 4
-#define IR5PIN 5
-
-#define SONAR0TRIGPIN 13
-#define SONAR0ECHOPIN 0
+//#define IR0PIN 0
+//#define IR1PIN 1
+//#define IR2PIN 2
+//#define IR3PIN 3
+//#define IR4PIN 4
+//#define IR5PIN 5
+//
+//#define SONAR0TRIGPIN 13
+//#define SONAR0ECHOPIN 13
+//
+//#define PROPELLORPIN 6;
+//#define RUDDERPIN 3;
 
 //IR ir_0;
 //IR ir_1;
@@ -50,7 +58,19 @@
 //IR ir_4;
 //IR ir_5;
 
-Sonar sonar_0;
+//Sonar sonar_0;
+
+Tugboat tugboat;
+
+
+// TODO: trim this down if possible
+boolean realTimeRunStop = true;   //create a name for real time control loop flag
+String command = "stop ";         //create a String object name for operator command string
+String loopError = "no error";    //create a String for the real time control loop error system
+unsigned long oldLoopTime = 0;    //create a name for past loop time in milliseconds
+unsigned long newLoopTime = 0;    //create a name for new loop time in milliseconds
+unsigned long cycleTime = 0;      //create a name for elapsed loop cycle time
+const long controlLoopInterval = 1000; //create a name for control loop cycle time in milliseconds
 
 
 void setup(){
@@ -61,57 +81,12 @@ void setup(){
   //ir_3.init();
   //ir_4.init();
   //ir_5.init();
-
-  sonar_0.init();
-  sonar_0.trigPin = SONAR0TRIGPIN;
-  sonar_0.echoPin = SONAR0ECHOPIN;
+//
+//  sonar_0.init();
+//  sonar_0.trigPin = SONAR0TRIGPIN;
+//  sonar_0.echoPin = SONAR0ECHOPIN;
 }
 
-void loop() {
-  //ir_0.update();
-  //ir_0.print();
-
-  sonar_0.update();
-  sonar_0.print();
-}
-
-/*
-#define IR1_PIN 0
-#define IR2_PIN 1
-#define IR3_PIN 2
-#define IR4_PIN 3
-#define IR5_PIN 4
-#define IR5_PIN 4
-
-
-#include "Tugboat.h"
-
-Tugboat boat;
-
-//========================================================================================
-// Create and initialize global variables, objects and constants (containers for all data)
-//========================================================================================
-boolean realTimeRunStop = true;   //create a name for real time control loop flag
-String command = "stop ";         //create a String object name for operator command string
-String loopError = "no error";    //create a String for the real time control loop error system
-unsigned long oldLoopTime = 0;    //create a name for past loop time in milliseconds
-unsigned long newLoopTime = 0;    //create a name for new loop time in milliseconds
-unsigned long cycleTime = 0;      //create a name for elapsed loop cycle time
-const long controlLoopInterval = 1000; //create a name for control loop cycle time in milliseconds
-
-//=========================================================================================
-// Startup code to configure robot and pretest all robot functionality (to run once)
-// and code to setup robot mission for launch.
-//=========================================================================================
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  boat.init();
-
-}
-//=============================================================================
-// Flight code to run continuously until robot is powered down
-//=============================================================================
 void loop() {
   // Get operator input from serial monitor
   command = getOperatorInput();
@@ -127,33 +102,27 @@ void loop() {
     if (newLoopTime - oldLoopTime >= controlLoopInterval) { // if true run flight code
       oldLoopTime = newLoopTime;          // reset time stamp
 
-      // SENSE-THINK-ACT =============================================================================
-      // SENSE -------------------------------------------------------------
-      boat.updatePixy(); // Data saved in boat.pixyDataArray (int [NUM_PTS] defined in Tugboat.h)
-      boat.updateIR(); // Data saved in boat.irDataArray(int [NUM_PTS] defined in Tugboat.h)
-      // THINK -------------------------------------------------------------
-      boat.arbiter();
-      boat.processData(); // Uses data arrays to update irDecisionArray, pixyDecisionArray
-      boat.state = commandState(); // Uses command to update boat state
-      boat.stateController(); // Uses decision arrays and current state to run motors
-      // ACT ---------------------------------------------------------------
-      boat.setPropSpeed(boat.cmd_velocity);
-      boat.setHeading(boat.cmd_heading);
-      // END SENSE-THINK-ACT ==========================================================================
-
-      // Check to see if all code ran successfully in one real-time increment
-      if (checkCycleTime() == 1){
-        break;
-      }
-    } // end flight code
-  } // end real-time loop
-} // end main loop
+      // TODO: import sensor data from different arduinos here (
+      // sensors.update()
+      // tugboat.update(sensors) // Sensors is a custom library that defines sensor layout on our particular boat
+      
+      tugboat.update(); // Pass in sensor data here
+      tugboat.move();    
+    }
 
 
-//========================================================================================
-// Functions for flight code
-//========================================================================================
-// OPERATOR INPUT FUNCTIONS ------------------------------------------------------------------------------
+  
+  //ir_0.update();
+  //ir_0.print();
+
+//  sonar_0.update();
+//  sonar_0.print();
+  }
+}
+
+
+
+// TODO: put these functions somewhere else - it's clutter here
 String getOperatorInput()
 {
   Serial.println(F("======================================================================================"));
@@ -200,26 +169,3 @@ int checkCycleTime() {
     return 0;
   }
 }
-
-// STATE CONTROLLER FUNCTIONS ------------------------------------------------------------------------------
-
-int commandState(){ // Takes command, returns int for state for switch
-  if (command == "stop\n"){
-    return 1;
-  }
-  else if (command == "idle\n"){
-    return 2;
-  }
-  else if (command == "chase\n"){
-    return 3;
-  }
-  else if (command == "search\n"){
-    return 4;
-  }
-  // TODO: add wall follow, figure 8, dock
-  else {
-    Serial.println(command);
-    return 0;
-  }
-}
-*/

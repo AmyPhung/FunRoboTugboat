@@ -20,7 +20,7 @@ void IR::update()
 {
   raw_data = readSensor();
   //raw_data = constrain(raw_data, 150, 400);
-  data = 19807 * pow(raw_data, -1.0917);
+  data = 19807 * pow(raw_data, -1.0917); // In cm
 }
 
 
