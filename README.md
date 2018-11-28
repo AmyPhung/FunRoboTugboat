@@ -89,3 +89,9 @@ This object contains all the sensors and pin values for our specific tugboat con
 
 
 # To-do:
++ write behavior functions
++ put sensor object functions in separate folder when complete
++ determine if PWM signals alone would be good enough for sonars (will need other pins if sensors have conflict issues) and update code to reflect that
++ determine how Pixycam data is processed
++ figure out how data transfer works with serial
+
