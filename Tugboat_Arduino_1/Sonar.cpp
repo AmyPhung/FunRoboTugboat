@@ -2,7 +2,7 @@
 #include "Sonar.h"
 
 Sonar::Sonar()
-{ 
+{
 }
 
 
@@ -24,7 +24,7 @@ void Sonar::update()
     cumReading = reading + cumReading;
     delay(1);
   }
-  data = cumReading; // in mm
+  data = cumReading; // in cm
 }
 void Sonar::print()
 {
@@ -44,6 +44,6 @@ int Sonar::readSensor()
   // Reads the echoPin, returns the sound wave travel time in microseconds
   duration = pulseIn(echoPin, HIGH);
   // Calculating the distance
-  distance = duration*0.034/2;
+  distance = (duration*0.034/2)/1000; //in cm
   return distance;
 }

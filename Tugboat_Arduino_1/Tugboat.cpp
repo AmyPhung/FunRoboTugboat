@@ -1,6 +1,8 @@
 #include "Arduino.h"
 #include "Tugboat.h"
 
+#define STOPPEDMICRO 1300 //Typically 1500 - sometimes changes, unsure why
+
 Tugboat::Tugboat()
 {
 }
@@ -9,14 +11,17 @@ void Tugboat::init() {
   sensors.init();
   
   propellor.attach(propellorPin);
-  propellor.writeMicroseconds(1500);
+  Serial.println(propellorPin);
+  propellor.writeMicroseconds(STOPPEDMICRO);
   rudder.attach(rudderPin);
-  rudder.writeMicroseconds(1500);
+  rudder.writeMicroseconds(STOPPEDMICRO);
 }
 
 void Tugboat::update() {
   //TODO: update state, commands, sensor data etc
   sensors.update();
+  stateController();
+  
   //(to get data, sensors.ir1.data
   //              sensors.ir4.heading
 }
@@ -66,7 +71,8 @@ void Tugboat::stateController() {
 // TODO: Each of these functions is its own "arbiter" (brain) that thinks with that state goal in mind
 void Tugboat::stop()
 {
-  
+  velocity = 0;
+  heading = 0;
 }
 void Tugboat::idle()
 {
@@ -94,7 +100,8 @@ void Tugboat::rcircle()
 }
 void Tugboat::chase()
 {
-  
+  velocity = 100;
+  heading = 100;
 }
 void Tugboat::search()
 {
@@ -110,18 +117,22 @@ int safetyCheck()
 // Act Functions -------------------------------------------------------------
 //function to set propellor speed by percentage
 void Tugboat::setPropSpeed(int speedPercentage){
+  //TODO: Get rid of speed limit
+  int tempLimit = 0;
+  
   // Boat speed is between 1000 and 2000 with 1500 = boat stopped
   int microSec;
   if (speedPercentage>=100){ // Limit max speed percentage
-    microSec= 2000;        //full speed forward
+    microSec= STOPPEDMICRO+500;//2000-tempLimit;        //full speed forward     
   }
   else if (speedPercentage<100 && speedPercentage>-100){
-    microSec = map(speedPercentage,-100, 100, 1000, 2000);
+    microSec = map(speedPercentage,-100, 100, STOPPEDMICRO-500, STOPPEDMICRO+500);
   }
   else if (speedPercentage<=-100){ // Limit min speed percentage
-    microSec=1000;         // back up full speed
+    microSec= STOPPEDMICRO-500;//1000+tempLimit;         // back up full speed
   }
   propellor.writeMicroseconds(microSec);
+
 }
 
 
@@ -140,5 +151,3 @@ void Tugboat::setHeading(int degHeading) // Input heading in degrees
   }
   rudder.writeMicroseconds(microSec);
 }
-
-// move(heading, velocity)

@@ -35,11 +35,12 @@
 #include "Tugboat.h"
 #include "Sensors.h"
 
-#define PROPELLORPIN 6;
-#define RUDDERPIN 3;
+#define PROPELLORPIN 9;
+#define RUDDERPIN 10;
 
 
 Tugboat tugboat;
+
 
 // TODO: trim this down if possible
 boolean realTimeRunStop = true;   //create a name for real time control loop flag
@@ -53,12 +54,15 @@ const long controlLoopInterval = 1000; //create a name for control loop cycle ti
 
 void setup(){
   Serial.begin(9600);
+  tugboat.propellorPin = PROPELLORPIN;
+  tugboat.rudderPin = RUDDERPIN;
   tugboat.init();
 }
 
 void loop() {
   // Get operator input from serial monitor
   command = getOperatorInput();
+  tugboat.state = classifyCommand(command);
 
   if (command == "stop") realTimeRunStop = false;     // skip real time inner loop
   else realTimeRunStop = true;                        // Set loop flag to run = true
@@ -128,6 +132,26 @@ int checkCycleTime() {
     return 1;          // break out of real-time inner loop
     }
   else {
+    return 0;
+  }
+}
+
+int classifyCommand(String command) {
+  if (command == "stop\n"){
+    return 1;
+  }
+  else if (command == "idle\n"){
+    return 2;
+  }
+  else if (command == "chase\n"){
+    return 8;
+  }
+  else if (command == "search\n"){
+    return 9;
+  }
+  // TODO: add other states
+  else {
+    Serial.println(command);
     return 0;
   }
 }
