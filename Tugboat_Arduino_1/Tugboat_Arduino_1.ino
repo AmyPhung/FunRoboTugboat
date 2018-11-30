@@ -31,6 +31,8 @@
   * 
   */
 
+// We'll use SoftwareSerial to communicate with the XBee, since hardware serial is reserved for between-arduino comms
+#include <SoftwareSerial.h>
 
 #include "Tugboat.h"
 #include "Sensors.h"
@@ -38,6 +40,11 @@
 #define PROPELLORPIN 9;
 #define RUDDERPIN 10;
 
+
+//For Atmega328P's
+// XBee's DOUT (TX) is connected to pin 2 (Arduino's Software RX)
+// XBee's DIN (RX) is connected to pin 3 (Arduino's Software TX)
+SoftwareSerial XBee(2, 3); // RX, TX
 
 Tugboat tugboat;
 
@@ -53,6 +60,7 @@ const long controlLoopInterval = 1000; //create a name for control loop cycle ti
 
 
 void setup(){
+  XBee.begin(9600);
   Serial.begin(9600);
   tugboat.propellorPin = PROPELLORPIN;
   tugboat.rudderPin = RUDDERPIN;
@@ -98,6 +106,16 @@ String getOperatorInput()
   Serial.println(F("| and then press SEND button.                                                        |"));
   Serial.println(F("======================================================================================"));
   while (Serial.available()==0) {};   // do nothing until operator input typed
+
+  if (Serial.available())
+  { // If data comes in from serial monitor, send it out to XBee
+    XBee.write(Serial.read());
+  }
+  if (XBee.available())
+  { // If data comes in from XBee, send it out to serial monitor
+    Serial.write(XBee.read());
+  }
+  
   command = Serial.readString();      // read command string
   //command.trim();
   Serial.print(F("| New robot behavior command is: "));    // give command feedback to operator
