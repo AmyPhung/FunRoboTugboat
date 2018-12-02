@@ -13,9 +13,9 @@
 #define IR4PIN 4
 #define IR5PIN 5
 
-#define SONAR0ECHOPIN 13
-#define SONAR1ECHOPIN 12
-#define SONAR2ECHOPIN 11
+#define SONAR0PIN 11
+#define SONAR1PIN 12
+#define SONAR2PIN 13
 
 
 class Sensors

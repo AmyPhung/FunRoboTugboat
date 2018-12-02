@@ -11,7 +11,6 @@ void Tugboat::init() {
   sensors.init();
   
   propellor.attach(propellorPin);
-  Serial.println(propellorPin);
   propellor.writeMicroseconds(STOPPEDMICRO);
   rudder.attach(rudderPin);
   rudder.writeMicroseconds(STOPPEDMICRO);
@@ -100,8 +99,8 @@ void Tugboat::rcircle()
 }
 void Tugboat::chase()
 {
-  velocity = 100;
-  heading = 100;
+  velocity = 40; // Percentage
+  heading = 100; // Percentage
 }
 void Tugboat::search()
 {
@@ -118,7 +117,7 @@ int safetyCheck()
 //function to set propellor speed by percentage
 void Tugboat::setPropSpeed(int speedPercentage){
   //TODO: Get rid of speed limit
-  int tempLimit = 0;
+  //int tempLimit = 0;
   
   // Boat speed is between 1000 and 2000 with 1500 = boat stopped
   int microSec;

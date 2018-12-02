@@ -13,9 +13,9 @@ void Sensors::init()
     ir_4.pin = IR4PIN;
     ir_5.pin = IR5PIN;
 
-    sonar_0.echoPin = SONAR0ECHOPIN;
-    sonar_1.echoPin = SONAR1ECHOPIN;
-    sonar_2.echoPin = SONAR2ECHOPIN;
+    sonar_0.pin = SONAR0PIN;
+    sonar_1.pin = SONAR1PIN;
+    sonar_2.pin = SONAR2PIN;
 
     ir_0.init();
     ir_1.init();

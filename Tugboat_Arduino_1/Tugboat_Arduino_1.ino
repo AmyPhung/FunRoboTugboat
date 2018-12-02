@@ -107,15 +107,18 @@ String getOperatorInput()
   Serial.println(F("======================================================================================"));
   while (Serial.available()==0) {};   // do nothing until operator input typed
 
+/*
   if (Serial.available())
   { // If data comes in from serial monitor, send it out to XBee
+    Serial.println("Attempting to send");
     XBee.write(Serial.read());
   }
   if (XBee.available())
   { // If data comes in from XBee, send it out to serial monitor
+    Serial.println("Attempting to recieve");
     Serial.write(XBee.read());
   }
-  
+ */
   command = Serial.readString();      // read command string
   //command.trim();
   Serial.print(F("| New robot behavior command is: "));    // give command feedback to operator
