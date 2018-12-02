@@ -31,13 +31,14 @@
   * 
   */
 
+// We'll use SoftwareSerial to communicate with the XBee, since hardware serial is reserved for between-arduino comms
+#include <SoftwareSerial.h>
 
 #include "Tugboat.h"
 #include "Sensors.h"
 
 #define PROPELLORPIN 9;
 #define RUDDERPIN 10;
-
 
 Tugboat tugboat;
 
