@@ -6,6 +6,8 @@ Following: https://pixycam.com/downloads-pixy2/
 If after `cd ../../../build/pixymon/bin/` you get the error `bash: cd: ../../../build/pixymon/bin/: No such file or directory` try using 
 `cd ~/pixy2/build/pixymon` instead.
 
+Arduino Setup: https://docs.pixycam.com/wiki/doku.php?id=wiki:v2:hooking_up_pixy_to_a_microcontroller_-28like_an_arduino-29
+
 # Pixy2 Library usage
 + Include: `#include <Pixy2.h>`
 + Object Declaration: `Pixy2 pixy;`
