@@ -7,9 +7,10 @@
    * This Version:
     * Introduces functions to make code eaiser to read, created a Tugboat library for ease
     * of controlling boat
- * Robot Name: Moby Pix (Team 4)
- * What does code do:
-   * sense: Detect range and bearing of target and obstacles with the Pixycam and IR sensors
+ * Robot Name: Lesley Y
+ * Team Name: Hopes and Dreams
+ * What the code does:
+   * sense: Detect range and bearing of target and obstacles with the Pixycam, IR sensors, and Sonar sensors
    * think: Combine bearing arrays for target and obstacles to optimize bearing of the tugboat.
    *        If unobstructed on set bearing, calculate propellor speed proportional to range
    * act:   Set rudder bearing, propellor speed
@@ -25,9 +26,6 @@
   *
   * update documentation for all things (docstrings + actual documentation)
   * wire everything (solder stuff)
-  *
-  * put IR, Pixycam, Sonar into separate folder (separate libraries for each sensor, not platform-specific)
-  * This folder should only have this file, tugboat, and sensors (all platform-specific)
   *
   */
 
@@ -95,20 +93,24 @@ void loop() {
 // TODO: put these functions somewhere else - it's clutter here
 String getOperatorInput()
 {
-  Serial.println(F("======================================================================================"));
-  Serial.println(F("|Robot Behavior-Commands: chase(moves robot), stop(e-stops motors), idle(robot idles)|"));
-  Serial.println(F("|                                                                                    |"));
-  Serial.println(F("| Please type desired robot behavior in command line at top of this window           |"));
-  Serial.println(F("| and then press SEND button.                                                        |"));
-  Serial.println(F("======================================================================================"));
+  if (!CSV) {
+    Serial.println(F("======================================================================================"));
+    Serial.println(F("|Robot Behavior-Commands: chase(moves robot), stop(e-stops motors), idle(robot idles)|"));
+    Serial.println(F("|                                                                                    |"));
+    Serial.println(F("| Please type desired robot behavior in command line at top of this window           |"));
+    Serial.println(F("| and then press SEND button.                                                        |"));
+    Serial.println(F("======================================================================================"));
+  }
   while (Serial.available()==0) {};   // do nothing until operator input typed
   command = Serial.readString();      // read command string
   //command.trim();
-  Serial.print(F("| New robot behavior command is: "));    // give command feedback to operator
-  Serial.println(command);
-  Serial.println(F("| Type 'stop' to stop control loop and wait for new command                          |"));
-  Serial.println(F("======================================================================================"));
-  return command;
+  if (!CSV) {
+    Serial.print(F("| New robot behavior command is: "));    // give command feedback to operator
+    Serial.println(command);
+    Serial.println(F("| Type 'stop' to stop control loop and wait for new command                          |"));
+    Serial.println(F("======================================================================================"));
+  }
+    return command;
 }
 
 int checkOperatorInput() {
@@ -128,11 +130,13 @@ int checkOperatorInput() {
 int checkCycleTime() {
   cycleTime = millis()-newLoopTime;     // calculate loop execution time
   if( cycleTime > controlLoopInterval){
-    Serial.println("******************************************");
-    Serial.println("error - real time has failed, stop robot!"); // loop took too long to run
-    Serial.print(" 1000 ms real-time loop took = ");
-    Serial.println(cycleTime);                                   // print loop time
-    Serial.println("******************************************");
+    if (!CSV) {
+      Serial.println("******************************************");
+      Serial.println("error - real time has failed, stop robot!"); // loop took too long to run
+      Serial.print(" 1000 ms real-time loop took = ");
+      Serial.println(cycleTime);                                   // print loop time
+      Serial.println("******************************************");
+    }
     return 1;          // break out of real-time inner loop
     }
   else {
@@ -155,7 +159,9 @@ int classifyCommand(String command) {
   }
   // TODO: add other states
   else {
-    Serial.println(command);
+    if (!CSV) {
+      Serial.println(command);
+    }
     return 0;
   }
 }
