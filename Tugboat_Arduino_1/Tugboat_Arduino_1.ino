@@ -20,15 +20,15 @@
 
  /*
   * TODO
-  * 
+  *
   * test libraries
-  * 
+  *
   * update documentation for all things (docstrings + actual documentation)
   * wire everything (solder stuff)
-  * 
+  *
   * put IR, Pixycam, Sonar into separate folder (separate libraries for each sensor, not platform-specific)
   * This folder should only have this file, tugboat, and sensors (all platform-specific)
-  * 
+  *
   */
 
 // We'll use SoftwareSerial to communicate with the XBee, since hardware serial is reserved for between-arduino comms
@@ -37,8 +37,9 @@
 #include "Tugboat.h"
 #include "Sensors.h"
 
-#define PROPELLORPIN 9;
-#define RUDDERPIN 10;
+#define CSV true
+#define PROPELLORPIN 9
+#define RUDDERPIN 10
 
 Tugboat tugboat;
 
@@ -52,12 +53,14 @@ unsigned long newLoopTime = 0;    //create a name for new loop time in milliseco
 unsigned long cycleTime = 0;      //create a name for elapsed loop cycle time
 const long controlLoopInterval = 1000; //create a name for control loop cycle time in milliseconds
 
-
 void setup(){
   Serial.begin(9600);
   tugboat.propellorPin = PROPELLORPIN;
   tugboat.rudderPin = RUDDERPIN;
   tugboat.init();
+  if (CSV) {
+    tugboat.sensors.csvHeader();
+  }
 }
 
 void loop() {
@@ -70,19 +73,19 @@ void loop() {
 
   // real-time loop -------------------------------------------------------------
   while(realTimeRunStop == true) {        // if OCU-Stop not commanded, run control loop
-    if (checkOperatorInput() == 1){
+    if (checkOperatorInput() == 1) {
       break;
     }
     if (newLoopTime - oldLoopTime >= controlLoopInterval) { // if true run flight code
       oldLoopTime = newLoopTime;          // reset time stamp
 
       tugboat.update(); // also updates sensors
-      tugboat.sensors.print();
+      tugboat.sensors.print(CSV);
       // TODO: Put data collection on a different arduino - figure out how this data will come in (thoughts: if pin == -1, use data from serial - else use pin)
-      
+
       // Sensors is a custom library that defines sensor layout on our particular boat
-      
-      tugboat.move();    
+
+      tugboat.move();
     }
   }
 }

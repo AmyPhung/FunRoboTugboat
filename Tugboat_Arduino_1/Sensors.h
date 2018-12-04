@@ -24,7 +24,8 @@ class Sensors
     Sensors();
     void init();
     void update();
-    void print();
+    void print(bool csv = false);
+    void csvHeader();
 
     IR ir_0;
     IR ir_1;
@@ -37,9 +38,10 @@ class Sensors
     Sonar sonar_1;
     Sonar sonar_2;
 
-    Pixycam pixycam;
-  
+   Pixycam pixycam;
+
   private:
+    void p(int var);
 };
-    
+
 #endif
