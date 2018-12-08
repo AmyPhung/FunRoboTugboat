@@ -1,4 +1,6 @@
 # FunRoboTugboat
+[![Documentation](https://codedocs.xyz/AmyPhung/FunRoboTugboat.svg)](https://codedocs.xyz/AmyPhung/FunRoboTugboat/)
+
 Autonomous Tugboat - Final project for Fundamentals of Robotics class, Fall 2018
 
 
