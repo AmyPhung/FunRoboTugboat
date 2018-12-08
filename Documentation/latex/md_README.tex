@@ -1,0 +1,211 @@
+Autonomous \hyperlink{class_tugboat}{Tugboat} -\/ Final project for Fundamentals of Robotics class, Fall 2018
+
+\subsection*{Sensor Objects}
+
+\subsubsection*{\hyperlink{class_i_r}{IR}}
+
+\subparagraph*{Methods\+:}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily void init()} -\/ initializes an \hyperlink{class_i_r}{IR} sensor, sets pin mode
+\item {\ttfamily void update()} -\/ updates \hyperlink{class_i_r}{IR} data and saves it into data attribute
+\item {\ttfamily void print()} -\/ prints the data
+\end{DoxyItemize}
+
+\subparagraph*{Attributes\+:}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily int pin} -\/ analog in pin \hyperlink{class_i_r}{IR} is plugged into
+\item {\ttfamily int x\+\_\+offset} -\/ not yet implemented
+\item {\ttfamily int y\+\_\+offset} -\/ not yet implemented
+\item {\ttfamily int heading} -\/ not yet implemented
+\item {\ttfamily int data} -\/ \hyperlink{class_i_r}{IR} reading in cm
+\end{DoxyItemize}
+
+\subsubsection*{\hyperlink{class_pixycam}{Pixycam}}
+
+
+\begin{DoxyItemize}
+\item not yet implemented
+\end{DoxyItemize}
+
+\subsubsection*{\hyperlink{class_sonar}{Sonar}}
+
+\subparagraph*{Methods\+:}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily void init()} -\/ initializes an sonar sensor, sets pin mode
+\item {\ttfamily void update()} -\/ updates sonar data and saves it into data attribute
+\item {\ttfamily void print()} -\/ prints the data
+\end{DoxyItemize}
+
+\subparagraph*{Attributes\+:}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily int pin} -\/ P\+WM pin sonar is plugged into
+\item {\ttfamily int x\+\_\+offset} -\/ not yet implemented
+\item {\ttfamily int y\+\_\+offset} -\/ not yet implemented
+\item {\ttfamily int heading} -\/ not yet implemented
+\item {\ttfamily int data} -\/ \hyperlink{class_i_r}{IR} reading in cm
+\end{DoxyItemize}
+
+\subsection*{Platform-\/dependent Objects}
+
+\subsubsection*{\hyperlink{class_sensors}{Sensors}}
+
+This object contains all the sensors and pin values for our specific tugboat configuration. This was made to streamline the sensor data flows from the sensors to the tugboat, especially when sensors get put on different arduinos. All pin values for sensors are stored in {\ttfamily \hyperlink{_sensors_8h_source}{Sensors.\+h}}
+
+\subparagraph*{Methods\+:}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily void init()} -\/ initializes all sensors, sets all pin modes
+\item {\ttfamily void update()} -\/ updates sonar data and saves it into data attribute
+\item {\ttfamily void print()} -\/ prints the data
+\end{DoxyItemize}
+
+\subparagraph*{Attributes\+:}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \hyperlink{class_i_r}{IR} ir\+\_\+0} -\/ \hyperlink{class_i_r}{IR} object 0
+\item ...
+\item {\ttfamily \hyperlink{class_i_r}{IR} ir\+\_\+5} -\/ \hyperlink{class_i_r}{IR} object 5
+\item {\ttfamily \hyperlink{class_sonar}{Sonar} sonar\+\_\+0} -\/ \hyperlink{class_sonar}{Sonar} object 0
+\item ...
+\item {\ttfamily \hyperlink{class_sonar}{Sonar} sonar\+\_\+2} -\/ \hyperlink{class_sonar}{Sonar} object 2
+\item {\ttfamily \hyperlink{class_pixycam}{Pixycam} pixycam} -\/ \hyperlink{class_pixycam}{Pixycam} object
+\end{DoxyItemize}
+
+\subsubsection*{\hyperlink{class_tugboat}{Tugboat}}
+
+\subparagraph*{Methods\+:}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily void init()} -\/ initializes a boat, also calls init function for sensors
+\item {\ttfamily void update()} -\/ calls update function for all sensors
+\item {\ttfamily void move()} -\/ moves the boat based on heading
+\item {\ttfamily void print()} -\/ not yet implemented
+\item {\ttfamily void state\+Controller()} -\/ sets the state for the boat and calls appropriate function
+\item {\ttfamily void stop()}
+\item {\ttfamily void idle()}
+\item {\ttfamily void avoid()}
+\item {\ttfamily void lwall()}
+\item {\ttfamily void rwall()}
+\item {\ttfamily void lcircle()}
+\item {\ttfamily void rcircle()}
+\item {\ttfamily void chase()}
+\item {\ttfamily void search()}
+\item {\ttfamily void set\+Prop\+Speed(int speed\+Percentage)}
+\item {\ttfamily void set\+Heading(int deg\+Heading)}
+\end{DoxyItemize}
+
+\subparagraph*{Attributes\+:}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \hyperlink{class_sensors}{Sensors} sensors}
+\item {\ttfamily int heading} -\/ Heading value in degrees
+\item {\ttfamily int velocity} -\/ Velocity value between -\/100 and 100
+\item {\ttfamily int state = 0} -\/ Integer representing state
+\begin{DoxyItemize}
+\item State 1\+: stop
+\item State 2\+: idle
+\item State 3\+: avoid -\/ use all sensor data to move to a safer position
+\item State 4\+: lwall -\/ follow wall on left of boat
+\item State 5\+: rwall -\/ follow wall on right of boat
+\item State 6\+: lcircle -\/ circumnavigate an object on left of boat
+\item State 7\+: rcircle -\/ circumnavigate an object on right of boat
+\item State 8\+: chase
+\item State 9\+: search
+\item State Other\+: stop
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+\subsection*{Now With Arduino Comms\+:}
+
+We\textquotesingle{}re using the Easy\+Transfer library for inter-\/\+Arduino communications. A link to getting this library set up is here -\/$>$ \href{https://github.com/EverardoG/Arduino-EasyTransfer}{\tt https\+://github.\+com/\+Everardo\+G/\+Arduino-\/\+Easy\+Transfer}.
+
+Arduino 1 passes the {\ttfamily pixydata} object to Arduino 2. Arduino 2 packs the data from {\ttfamily pixydata} and the information collected by its low level sensor suite into {\ttfamily sensedata}. Arduino 2 sends \textquotesingle{}sensedata\textquotesingle{} to Arduino 3. This is all done using the Tx and Rx pins on the Arduinos. This means it uses the same serial channel that you use for the Arduino Serial Monitor. The T\+H\+I\+N\+K/ A\+CT Arduino can print to Serial, but sending it anything through the Serial monitor will confuse it.
+
+\subsubsection*{Attributes of pixydata}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily unsigned long timestamp1} -\/ millisecond timestamp from Arduino 1 when it sent {\ttfamily pixydata} (This was just to test functionality)
+\end{DoxyItemize}
+
+We will add more to this once we figure out exactly what pieces of data we want from the pixycam.
+
+\subsubsection*{Attributes of sensedata}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily unsigned long timestamp1} -\/ millisecond timestamp from Arduino 1 when it sent {\ttfamily pixydata} (This was just to test functionality)
+\item {\ttfamily unsigned long timestamp2} -\/ millisecond timestamp from Arduino 2 when it sent {\ttfamily sensedata} (This was just to test functionality)
+\item {\ttfamily int ir\+\_\+0\+\_\+data} -\/ meters measured by \hyperlink{class_i_r}{IR} 0
+\item {\ttfamily int ir\+\_\+1\+\_\+data} -\/ meters measured by \hyperlink{class_i_r}{IR} 1
+\item {\ttfamily int ir\+\_\+2\+\_\+data} -\/ meters measured by \hyperlink{class_i_r}{IR} 2
+\item {\ttfamily int ir\+\_\+3\+\_\+data} -\/ meters measured by \hyperlink{class_i_r}{IR} 3
+\item {\ttfamily int ir\+\_\+4\+\_\+data} -\/ meters measured by \hyperlink{class_i_r}{IR} 4
+\item {\ttfamily int ir\+\_\+5\+\_\+data} -\/ meters measured by \hyperlink{class_i_r}{IR} 5
+\item {\ttfamily sonar\+\_\+0\+\_\+data} -\/ meters measured by sonar 0
+\item {\ttfamily sonar\+\_\+1\+\_\+data} -\/ meters measured by sonar 1
+\item {\ttfamily sonar\+\_\+2\+\_\+data} -\/ meters measured by sonar 2
+\end{DoxyItemize}
+
+There will be more here once we integrate actual values from the pixycam.
+
+\subsection*{Now with X\+Bee Comms}
+
+We can now communicate with our boat remotely! It\textquotesingle{}s awesome! We use an {\ttfamily Xbee} object on Arduino 3 to communicate via X\+Bee.
+
+For it to work, you need to install the X\+Bee software on your laptop first. Here\textquotesingle{}s a really great walkthrough on that -\/$>$ \href{https://github.com/olinrobotics/main/wiki/XBee-Radios}{\tt https\+://github.\+com/olinrobotics/main/wiki/\+X\+Bee-\/\+Radios}. Once you have that set up, here\textquotesingle{}s the step-\/by-\/step guide to setting up comms.
+
+\subsubsection*{Setup}
+
+\paragraph*{Boat Side}
+
+
+\begin{DoxyEnumerate}
+\item Upload code to each Arduino. Arduino 1 is the pixy cam arduino. Arduino 2 is the low level sensing arduino. Arduino 3 is the T\+H\+I\+N\+K/\+A\+CT arduino.
+\item Make sure that all arduinos are connected to eachother properly. Arduino 1 Tx -\/$>$ Arduino 2 Rx Arduino 2 Tx -\/$>$ Arduino 3 Rx
+\item Verify that the X\+Bee is indeed plugged into Arduino 3.
+\item Turn on the boat.
+\end{DoxyEnumerate}
+
+\paragraph*{Laptop Side}
+
+
+\begin{DoxyEnumerate}
+\item Connect the O\+CU X\+Bee to your laptop via the adaptor board.
+\item Open up the X\+C\+T\+U.\+desktop software. Remember, you need to use {\ttfamily sudo X\+C\+TU ./\+X\+C\+TU.desktop} to make it work.
+\item Click \char`\"{}\+Add a Radio Module\char`\"{} in the upper left hand corner. Add the O\+CU X\+Bee. It should show up with \char`\"{}\+O\+C\+U\char`\"{} as its name.
+\item In the upper right, there\textquotesingle{}s a gear icon. Next to it is a computer/ terminal icon. Click it.
+\item Now you\textquotesingle{}ll see three icons above the \char`\"{}\+Console Log\char`\"{}. Click \char`\"{}\+Open\char`\"{}. This makes it so that your laptop X\+Bee is now listening to the boat X\+Bee. You can also type into the \char`\"{}\+Console Log\char`\"{} to send commands to the boat!
+\end{DoxyEnumerate}
+
+\subsubsection*{Methods of X\+Bee Comms Object}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily void begin(int baudrate)} -\/ sets the data baudrate for X\+Bee transmission
+\item {\ttfamily void write(char array)} -\/ the boat will send out this char array to the X\+Bee channel
+\item {\ttfamily int available()} -\/ returns the number of bytes avaiable to read from X\+Bee channel
+\item {\ttfamily char read()} -\/ returns the character read on the X\+Bee channel (Someone should double check this, but for our purposes, this captures everything that matters)
+\end{DoxyItemize}
+
+\section*{To-\/do\+:}
+
+
+\begin{DoxyItemize}
+\item write behavior functions
+\item put sensor object functions in separate folder when complete
+\item determine if P\+WM signals alone would be good enough for sonars (will need other pins if sensors have conflict issues) and update code to reflect that
+\item determine how \hyperlink{class_pixycam}{Pixycam} data is processed 
+\end{DoxyItemize}
