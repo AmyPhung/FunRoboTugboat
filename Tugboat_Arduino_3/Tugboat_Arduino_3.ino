@@ -1,35 +1,9 @@
-/*****************************************************************************************
-   Title: 2018 Fun-Robo Narwhal chasing tugboat (ENGR3390 Think Lab)
-   Description:
-     Original:This structure template contains a SENSE-THINK-ACT flow to allow a robotic
-      tugboat to perform a sequence of meta-behaviors in soft-real-time based on direct text
-       commands from a human operator.
-     This Version:
-      Introduces functions to make code eaiser to read, created a Tugboat library for ease
-      of controlling boat
-   Robot Name: Moby Pix (Team 4)
-   What does code do:
-     sense: Detect range and bearing of target and obstacles with the Pixycam and IR sensors
-     think: Combine bearing arrays for target and obstacles to optimize bearing of the tugboat.
-            If unobstructed on set bearing, calculate propellor speed proportional to range
-     act:   Set rudder bearing, propellor speed
-   Hardware warnings: Do not wire the Pixycam ICSP arduino I/O pin the wrong way around.
-   Created by Moby Pix (Team 4) November 2018
- * ***************************************************************************************
-*/
-
-/*
-   TODO
-
-   test libraries
-
-   update documentation for all things (docstrings + actual documentation)
-   wire everything (solder stuff)
-
-   put IR, Pixycam, Sonar into separate folder (separate libraries for each sensor, not platform-specific)
-   This folder should only have this file, tugboat, and sensors (all platform-specific)
-
-*/
+/**
+  * @description Tugboat Arduino 3: Uses collected data from other arduinos
+  to control tugboat
+  * @author Amy Phung, Everardo Gonzalez, Liz Leadley, Robert Wechsler
+  * @date December 2018
+  */
 
 // We'll use SoftwareSerial to communicate with the XBee, since hardware serial is reserved for between-arduino comms
 #include <SoftwareSerial.h>

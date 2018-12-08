@@ -1,8 +1,8 @@
-/*******************************************************************************
-Tugboat Arduino 1: Collects Pixycam data and sends it to next Arduino
-Created by: Amy Phung, Everardo Gonzalez, Liz Leadley, Robert Wechsler
-December 2018
- * ****************************************************************************/
+/**
+  * Tugboat Arduino 1: Collects Pixycam data and sends it to next Arduino
+  * @author Amy Phung, Everardo Gonzalez, Liz Leadley, Robert Wechsler
+  * @date December 2018
+  */
 
 // We'll use SoftwareSerial to communicate with the XBee, since hardware serial is reserved for between-arduino comms
 #include <SoftwareSerial.h>
@@ -12,19 +12,11 @@ December 2018
 #include "ArduinoComms1.h"
 
 EasyTransfer PIXY; // transfer object for arduino comms
+SEND_DATA_STRUCTURE pixydata; // creating data structure
 
-// creating data structure
-SEND_DATA_STRUCTURE pixydata;
-
-// TODO: trim this down if possible
-boolean realTimeRunStop = true;   //create a name for real time control loop flag
-String command = "stop ";         //create a String object name for operator command string
-String loopError = "no error";    //create a String for the real time control loop error system
 unsigned long oldLoopTime = 0;    //create a name for past loop time in milliseconds
 unsigned long newLoopTime = 0;    //create a name for new loop time in milliseconds
-unsigned long cycleTime = 0;      //create a name for elapsed loop cycle time
 const long controlLoopInterval = 100; //create a name for control loop cycle time in milliseconds
-
 
 void setup() {
   Serial.begin(9600);
@@ -39,7 +31,6 @@ void loop() {
   if (newLoopTime - oldLoopTime >= controlLoopInterval) {
     oldLoopTime = newLoopTime;
 
-
     //TODO: Code to collect Pixycam data
 
     // TODO: Code to process Pixycam data to what we want to send
@@ -50,6 +41,5 @@ void loop() {
     pixydata.timestamp1 = millis();
     PIXY.sendData();
   }
-
   // ---------------------REAL TIME CONTROL LOOP ENDS HERE -------------------------
 }
