@@ -1,4 +1,0 @@
-<map id="Sensors" name="Sensors">
-<area shape="rect" id="node2" href="$class_i_r.html" title="IR" alt="" coords="5,5,44,32"/>
-<area shape="rect" id="node3" href="$class_sonar.html" title="Sonar" alt="" coords="67,5,123,32"/>
-</map>
