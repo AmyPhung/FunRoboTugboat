@@ -2,18 +2,21 @@
 #define Tugboat_h
 
 #include <Servo.h>
-#include "Sensors.h"
 
 class Tugboat
 {
   public:
     Tugboat();
     void init();
-    void update(int ir_0_rawdata, int ir_1_rawdata, int ir_2_rawdata, int ir_3_rawdata, int ir_4_rawdata, int ir_5_rawdata, int sonar_0_rawdata, int sonar_1_rawdata, int sonar_2_rawdata);
-    void move();    
+    void update(int ir_0_data, int ir_1_data, int ir_2_data,
+                int ir_3_data, int ir_4_data, int ir_5_data,
+                int sonar_0_data, int sonar_1_data, int sonar_2_data);
+    void move();
     void stateController();
 
-    Sensors sensors;
+    int ir_0, ir_1, ir_2, ir_3, ir_4, ir_5;
+    int sonar_0, sonar_1, sonar_2;
+
     int heading = 0;  // Turn in degrees
     int velocity = 0; // Between -100 and 100
     int state = 0;    // States
@@ -38,7 +41,7 @@ class Tugboat
     void rcircle();
     void chase();
     void search();
-    
+
     // ACT
     void setPropSpeed(int speedPercentage);
     void setHeading(int degHeading);

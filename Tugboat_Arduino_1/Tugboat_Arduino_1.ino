@@ -37,8 +37,6 @@
 // This is for cross Arduino comms
 #include <EasyTransfer.h>
 
-#include "Sensors.h"
-
 EasyTransfer PIXY; // transfer object for arduino comms
 
 // creating data structure to send to Arudino 2
@@ -90,4 +88,3 @@ void loop() {
 
   // ---------------------REAL TIME CONTROL LOOP ENDS HERE -------------------------
 }
-

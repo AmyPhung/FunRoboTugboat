@@ -38,7 +38,6 @@
 SoftwareSerial XBee(2, 3); // RX, TX
 
 #include "Tugboat.h"
-#include "Sensors.h"
 
 #define PROPELLORPIN 9;
 #define RUDDERPIN 10;
@@ -119,21 +118,22 @@ void loop() {
         XBee.write("I got data!");  // boat tells us she received data
         // this code below does some things with timing. Currently not functional
         // because arudino restarts whenever you plug your laptop into it
-//        timestamp3 = millis(); //record when data was recieved
-//        timestamp1 = sensedata.timestamp1;
-//        timestamp2 = sensedata.timestamp2;
-//        lag1 = timestamp2 - timestamp1; // record lag from 1 to 2
-//        lag2 = timestamp3 - timestamp2; //record lag from 2 to 3
+        //        timestamp3 = millis(); //record when data was recieved
+        //        timestamp1 = sensedata.timestamp1;
+        //        timestamp2 = sensedata.timestamp2;
+        //        lag1 = timestamp2 - timestamp1; // record lag from 1 to 2
+        //        lag2 = timestamp3 - timestamp2; //record lag from 2 to 3
+        Serial.println(sensedata.ir_0_data);
       }
-      tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data, 
-                     sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data, 
+      tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
+                     sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
                      sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
 
       // TODO: Put data collection on a different arduino - figure out how this data will come in (thoughts: if pin == -1, use data from serial - else use pin)
 
       // Sensors is a custom library that defines sensor layout on our particular boat
       //tugboat.velocity = 50;
-      
+
       tugboat.move();
     } // ----------------------------- REAL TIME CONTROL LOOP ENDS HERE --------------------
   }
