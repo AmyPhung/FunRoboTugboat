@@ -33,10 +33,10 @@
 
 // We'll use SoftwareSerial to communicate with the XBee, since hardware serial is reserved for between-arduino comms
 #include <SoftwareSerial.h>
-
 // This is for cross Arduino comms
 #include <EasyTransfer.h>
-#include "Xbee1.h"
+// Provides SEND_DATA_STRUCTURE for Arduino comms
+#include "ArduinoComms1.h"
 
 EasyTransfer PIXY; // transfer object for arduino comms
 

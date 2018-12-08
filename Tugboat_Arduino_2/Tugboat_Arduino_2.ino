@@ -31,9 +31,12 @@
 
 */
 
-#include <EasyTransfer.h> // arduino comms
-#include "Sensors.h" //sensors
-#include "Xbee2.h" 
+// This is for cross Arduino comms
+#include <EasyTransfer.h>
+// Provides RECEIVE_DATA_STRUCTURE and SEND_DATA_STRUCTURE for Arduino comms
+#include "ArduinoComms2.h"
+// Provides Sensors object to collect and process sensor data
+#include "Sensors.h"
 
 Sensors sensors;
 EasyTransfer PIXY; // arduino comms from Arrduino 1

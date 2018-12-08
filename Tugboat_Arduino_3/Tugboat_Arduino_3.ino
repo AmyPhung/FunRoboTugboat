@@ -32,10 +32,11 @@
 */
 
 // We'll use SoftwareSerial to communicate with the XBee, since hardware serial is reserved for between-arduino comms
-#include <SoftwareSerial.h> //XBee comms
-#include <EasyTransfer.h> // Arduino comms
-
-#include "Xbee3.h" //Provides SEND_DATA_STRUCTURE and RECIEVE_DATA_STRUCTURE for xbee
+#include <SoftwareSerial.h>
+// This is for cross Arduino comms
+#include <EasyTransfer.h>
+// Provides RECIEVE_DATA_STRUCTURE for Arduino comms
+#include "ArduinoComms3.h"
 
 SoftwareSerial XBee(2, 3); // RX, TX
 
