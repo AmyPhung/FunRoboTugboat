@@ -4,7 +4,6 @@
 #include "Arduino.h"
 #include "IR.h"
 #include "Sonar.h"
-#include "Pixycam.h"
 
 #define IR0PIN 0
 #define IR1PIN 1
@@ -37,9 +36,7 @@ class Sensors
     Sonar sonar_1;
     Sonar sonar_2;
 
-    Pixycam pixycam;
-  
   private:
 };
-    
+
 #endif

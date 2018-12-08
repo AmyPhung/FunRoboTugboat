@@ -1,28 +1,31 @@
 #include "Arduino.h"
 #include "Tugboat.h"
 
-#define STOPPEDMICRO 1300 //Typically 1500 - sometimes changes, unsure why
+#define STOPPEDMICRO 2000 //Typically 1500 - sometimes changes, unsure why
 
 Tugboat::Tugboat()
 {
 }
 
 void Tugboat::init() {
-  sensors.init();
-  
   propellor.attach(propellorPin);
   propellor.writeMicroseconds(STOPPEDMICRO);
   rudder.attach(rudderPin);
   rudder.writeMicroseconds(STOPPEDMICRO);
 }
 
-void Tugboat::update() {
+void Tugboat::update(int ir_0_data, int ir_1_data, int ir_2_data,
+                     int ir_3_data, int ir_4_data, int ir_5_data,
+                     int sonar_0_data, int sonar_1_data, int sonar_2_data) {
+  ir_0 = ir_0_data;
+  ir_1 = ir_1_data;
+  ir_2 = ir_2_data;
+  ir_3 = ir_3_data;
+  ir_4 = ir_4_data;
+  ir_5 = ir_5_data;
+
   //TODO: update state, commands, sensor data etc
-  sensors.update();
   stateController();
-  
-  //(to get data, sensors.ir1.data
-  //              sensors.ir4.heading
 }
 
 void Tugboat::move() {
@@ -52,7 +55,7 @@ void Tugboat::stateController() {
               break;
       case 7: Serial.println("Robot State: rcircle");
               rcircle(); //circumnavigate an object on right of boat
-              break;             
+              break;
       case 8: Serial.println("Robot State: chase");
               chase();
               break;
@@ -75,36 +78,35 @@ void Tugboat::stop()
 }
 void Tugboat::idle()
 {
-  
+
 }
 void Tugboat::avoid()
 {
-  
+
 }
 void Tugboat::lwall() // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
 {
-  
+
 }
 void Tugboat::rwall()
 {
-  
+
 }
 void Tugboat::lcircle()
 {
-  
+
 }
 void Tugboat::rcircle()
 {
-  
+
 }
 void Tugboat::chase()
 {
-  velocity = 40; // Percentage
-  heading = 100; // Percentage
+
 }
 void Tugboat::search()
 {
-  
+
 }
 
 // Safety Function -----------------------------------------------------------
@@ -118,11 +120,11 @@ int safetyCheck()
 void Tugboat::setPropSpeed(int speedPercentage){
   //TODO: Get rid of speed limit
   //int tempLimit = 0;
-  
+
   // Boat speed is between 1000 and 2000 with 1500 = boat stopped
   int microSec;
   if (speedPercentage>=100){ // Limit max speed percentage
-    microSec= STOPPEDMICRO+500;//2000-tempLimit;        //full speed forward     
+    microSec= STOPPEDMICRO+500;//2000-tempLimit;        //full speed forward
   }
   else if (speedPercentage<100 && speedPercentage>-100){
     microSec = map(speedPercentage,-100, 100, STOPPEDMICRO-500, STOPPEDMICRO+500);

@@ -4,17 +4,17 @@ Pixycam::Pixycam()
 {
 }
 
-void Pixycam::init() 
-{
-  
-}
-
-void Pixycam::print() 
+void Pixycam::init()
 {
 
 }
 
-void Pixycam::update() 
+void Pixycam::print()
 {
-  
+
+}
+
+void Pixycam::update()
+{
+
 }

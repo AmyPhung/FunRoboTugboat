@@ -86,12 +86,63 @@ This object contains all the sensors and pin values for our specific tugboat con
   + State 9: search
   + State Other: stop
 
+## Now With Arduino Comms:
+We're using the EasyTransfer library for inter-Arduino communications. A link to getting this library set up is here -> https://github.com/EverardoG/Arduino-EasyTransfer. 
 
+Arduino 1 passes the `pixydata` object to Arduino 2. Arduino 2 packs the data from `pixydata` and the information collected by its low level sensor suite into `sensedata`. Arduino 2 sends 'sensedata' to Arduino 3. This is all done using the Tx and Rx pins on the Arduinos. This means it uses the same serial channel that you use for the Arduino Serial Monitor. The THINK/ ACT Arduino can print to Serial, but sending it anything through the Serial monitor will confuse it.
+
+### Attributes of pixydata
++ `unsigned long timestamp1` - millisecond timestamp from Arduino 1 when it sent `pixydata` (This was just to test functionality)
+
+We will add more to this once we figure out exactly what pieces of data we want from the pixycam.
+
+### Attributes of sensedata
++ `unsigned long timestamp1` - millisecond timestamp from Arduino 1 when it sent `pixydata` (This was just to test functionality)
++ `unsigned long timestamp2` - millisecond timestamp from Arduino 2 when it sent `sensedata` (This was just to test functionality)
+
++ `int ir_0_data` - meters measured by IR 0
++ `int ir_1_data` - meters measured by IR 1
++ `int ir_2_data` - meters measured by IR 2
++ `int ir_3_data` - meters measured by IR 3
++ `int ir_4_data` - meters measured by IR 4
++ `int ir_5_data` - meters measured by IR 5
+
++ `sonar_0_data` - meters measured by sonar 0
++ `sonar_1_data` - meters measured by sonar 1
++ `sonar_2_data` - meters measured by sonar 2
+
+There will be more here once we integrate actual values from the pixycam.
+
+## Now with XBee Comms
+We can now communicate with our boat remotely! It's awesome! We use an `Xbee` object on Arduino 3 to communicate via XBee.
+
+For it to work, you need to install the XBee software on your laptop first. Here's a really great walkthrough on that -> https://github.com/olinrobotics/main/wiki/XBee-Radios. Once you have that set up, here's the step-by-step guide to setting up comms.
+
+### Setup
+#### Boat Side
+1. Upload code to each Arduino. Arduino 1 is the pixy cam arduino. Arduino 2 is the low level sensing arduino. Arduino 3 is the THINK/ACT arduino.
+2. Make sure that all arduinos are connected to eachother properly.
+Arduino 1 Tx -> Arduino 2 Rx
+Arduino 2 Tx -> Arduino 3 Rx
+3. Verify that the XBee is indeed plugged into Arduino 3.
+4. Turn on the boat.
+
+#### Laptop Side
+1. Connect the OCU XBee to your laptop via the adaptor board.
+2. Open up the XCTU.desktop software. Remember, you need to use `sudo XCTU ./XCTU.desktop` to make it work. 
+3. Click "Add a Radio Module" in the upper left hand corner. Add the OCU XBee. It should show up with "OCU" as its name. 
+4. In the upper right, there's a gear icon. Next to it is a computer/ terminal icon. Click it.
+5. Now you'll see three icons above the "Console Log". Click "Open". This makes it so that your laptop XBee is now listening to the boat XBee. You can also type into the "Console Log" to send commands to the boat!
+
+### Methods of XBee Comms Object 
++ `void begin(int baudrate)` - sets the data baudrate for XBee transmission
++ `void write(char array)` - the boat will send out this char array to the XBee channel
++ `int available()` - returns the number of bytes avaiable to read from XBee channel
++ `char read()` - returns the character read on the XBee channel (Someone should double check this, but for our purposes, this captures everything that matters)
 
 # To-do:
 + write behavior functions
 + put sensor object functions in separate folder when complete
 + determine if PWM signals alone would be good enough for sonars (will need other pins if sensors have conflict issues) and update code to reflect that
 + determine how Pixycam data is processed
-+ figure out how data transfer works with serial
 
