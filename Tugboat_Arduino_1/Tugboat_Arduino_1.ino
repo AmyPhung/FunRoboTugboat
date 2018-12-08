@@ -36,20 +36,12 @@
 
 // This is for cross Arduino comms
 #include <EasyTransfer.h>
+#include "Xbee1.h"
 
 EasyTransfer PIXY; // transfer object for arduino comms
 
-// creating data structure to send to Arudino 2
-struct SEND_DATA_STRUCTURE
-{
-  // variable definitions go here
-  // MUST BE EXACTLY THE SAME ON THE OTHER ARDUINO
-  unsigned long timestamp1;
-//  Sensors sensors;
-};
-
 // creating data structure
-struct SEND_DATA_STRUCTURE pixydata;
+SEND_DATA_STRUCTURE pixydata;
 
 // TODO: trim this down if possible
 boolean realTimeRunStop = true;   //create a name for real time control loop flag
