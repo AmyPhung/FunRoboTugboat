@@ -57,12 +57,18 @@ String loopError = "no error";    //create a String for the real time control lo
 unsigned long oldLoopTime = 0;    //create a name for past loop time in milliseconds
 unsigned long newLoopTime = 0;    //create a name for new loop time in milliseconds
 unsigned long cycleTime = 0;      //create a name for elapsed loop cycle time
-const long controlLoopInterval = 1000; //create a name for control loop cycle time in milliseconds
+const long controlLoopInterval = 100; //create a name for control loop cycle time in milliseconds
 unsigned long timestamp1 = 0; // timestamp from first Arduino
 unsigned long timestamp2 = 0; // timestamp from second Arduino
 unsigned long timestamp3 = 0; // timestamp for third arduino
 unsigned lag1 = 0; //millisecond lag from Arduino1 to Arduino 2
 unsigned lag2 = 0; //millisecond lag from Arduino2 to Arduino 3
+
+// controller stuff
+int ctr_count = 0;
+int full_cycle = 30; // full motor pulse cycle - 3 seconds
+float pulse_ratio = 0.125; // fraction of time motors are on (put a decimal, doesn't like fractions)
+bool mtr_pulse = false;
 
 // creating data structure
 RECIEVE_DATA_STRUCTURE sensedata;
@@ -96,7 +102,8 @@ void loop() {
 
       //SENSE
       // get sensor data from Arduino 2
-      XBee.write("Beep! \n");
+      //XBee.write("Beep! \n");
+      
       if (SENSING.receiveData()) {  // this line updates sensor data
         XBee.write("I got data!");  // boat tells us she received data
         // this code below does some things with timing. Currently not functional
@@ -112,10 +119,52 @@ void loop() {
                      sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
                      sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
 
-      // TODO: Put data collection on a different arduino - figure out how this data will come in (thoughts: if pin == -1, use data from serial - else use pin)
+      // TODO: Put data collection on a different arduino - figure out how this data will come in (thoughts: if pin == -1, use data from serial - else use pin
 
       // Sensors is a custom library that defines sensor layout on our particular boat
       //tugboat.velocity = 50;
+
+      // fuck it, let's see if this controller works
+      float Kp = 64;
+      int a = Kp * (tugboat.ir_0 - tugboat.ir_1);
+
+      // dealing with those god damn edge cases
+      if (a > 45) {
+        a = 45;
+      }
+
+      else if (a < 0) {
+        a = 0; // just don't even turn left, not worth it
+      }
+
+      //else if (a < -45) {a = -45;} // this was for the turning left edge case but let's just make it not turn left
+
+      tugboat.heading = a;
+      // switch motor pulse on and off
+      if ( ctr_count <= pulse_ratio * full_cycle ) 
+      {
+        mtr_pulse = true;
+        XBee.write("pulsing motor");
+      }
+      else {
+        mtr_pulse = false;
+      }
+
+      // reset pulse counter
+      if (ctr_count >= full_cycle) {
+        ctr_count = 0;
+      }
+
+
+      // set motor speed
+      if (mtr_pulse == true) {
+        tugboat.velocity = 20;
+      }
+      else {
+        tugboat.velocity = 0;
+      }
+
+      ctr_count += 1;
 
       tugboat.move();
     } // ----------------------------- REAL TIME CONTROL LOOP ENDS HERE --------------------

@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "Tugboat.h"
 
-#define STOPPEDMICRO 2000 //Typically 1500 - sometimes changes, unsure why
+#define STOPPEDMICRO 1450 //Typically 1500 - sometimes changes, unsure why
 
 Tugboat::Tugboat()
 {
