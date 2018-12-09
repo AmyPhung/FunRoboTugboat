@@ -103,7 +103,7 @@ void loop() {
       //SENSE
       // get sensor data from Arduino 2
       //XBee.write("Beep! \n");
-      
+
       if (SENSING.receiveData()) {  // this line updates sensor data
         XBee.write("I got data!");  // boat tells us she received data
         // this code below does some things with timing. Currently not functional
@@ -118,11 +118,6 @@ void loop() {
       tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
                      sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
                      sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
-
-      // TODO: Put data collection on a different arduino - figure out how this data will come in (thoughts: if pin == -1, use data from serial - else use pin
-
-      // Sensors is a custom library that defines sensor layout on our particular boat
-      //tugboat.velocity = 50;
 
       // fuck it, let's see if this controller works
       float Kp = 64;
@@ -141,7 +136,7 @@ void loop() {
 
       tugboat.heading = a;
       // switch motor pulse on and off
-      if ( ctr_count <= pulse_ratio * full_cycle ) 
+      if ( ctr_count <= pulse_ratio * full_cycle )
       {
         mtr_pulse = true;
         XBee.write("pulsing motor");
@@ -176,9 +171,10 @@ void loop() {
 // TODO: put these functions somewhere else - it's clutter here
 String getOperatorInput()
 {
-  XBee.write("---------------------------\n 0 for stop, 1 for idle, 2 for chase \n");
+  XBee.write("\n--------------------------------------------\n 1 - Stop\n 2 - Idle\n 3 - Obstacle Avoidance (Not Implemented)\n 4 - Left Wall Follow\n 5 - Right Wall Follow (Not Implemented)\n 6 - Left Circle (Not Implemented) 7 - Right Circle (Not Implemented)\n 8 - Chase (Not Implemented)\n 9 - Search (Not Implemented)\n");
   while (XBee.available() == 0) {}; // do nothing until operator input typed
   command = XBee.read();      // read command string
+  Serial.println(command);
   XBee.write("\nCommand Received\n");
   return command;
 }
@@ -215,18 +211,35 @@ int checkCycleTime() {
 }
 
 int classifyCommand(String command) {
-  if (command == "0") {
-    return 1;
+  if (command == "49") {
+    return 1; //stopped
   }
-  else if (command == "1") {
-    return 2;
+  else if (command == "50") {
+    return 2; //idling
   }
-  else if (command == "2") {
-    return 8;
+  else if (command == "51") {
+    return 3; // obstacle avoidance
+  } 
+
+  else if (command == "52") {
+    return 4; //left wall follow
   }
-  else if (command == "search\n") {
-    return 9;
+  else if (command == "53") {
+    return 5; // right wall follow
   }
+  else if (command == "54") {
+    return 6; // left circle
+  }
+  else if (command == "55") {
+    return 7; // right circle
+  }
+  else if (command == "56") {
+    return 8; //chase
+  }
+  else if (command == "57") {
+    return 9; // search
+  }
+  
   // TODO: add other states
   else {
     //    XBee.write(command);

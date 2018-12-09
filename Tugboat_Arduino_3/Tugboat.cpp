@@ -87,6 +87,8 @@ void Tugboat::avoid()
 void Tugboat::lwall() // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
 {
 
+
+
 }
 void Tugboat::rwall()
 {
