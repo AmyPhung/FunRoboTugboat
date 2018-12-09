@@ -31,12 +31,18 @@ String loopError = "no error";    //create a String for the real time control lo
 unsigned long oldLoopTime = 0;    //create a name for past loop time in milliseconds
 unsigned long newLoopTime = 0;    //create a name for new loop time in milliseconds
 unsigned long cycleTime = 0;      //create a name for elapsed loop cycle time
-const long controlLoopInterval = 1000; //create a name for control loop cycle time in milliseconds
+const long controlLoopInterval = 100; //create a name for control loop cycle time in milliseconds
 unsigned long timestamp1 = 0; // timestamp from first Arduino
 unsigned long timestamp2 = 0; // timestamp from second Arduino
 unsigned long timestamp3 = 0; // timestamp for third arduino
 unsigned lag1 = 0; //millisecond lag from Arduino1 to Arduino 2
 unsigned lag2 = 0; //millisecond lag from Arduino2 to Arduino 3
+
+// controller stuff
+int ctr_count = 0;
+int full_cycle = 30; // full motor pulse cycle - 3 seconds
+float pulse_ratio = 0.125; // fraction of time motors are on (put a decimal, doesn't like fractions)
+bool mtr_pulse = false;
 
 // creating data structure
 RECIEVE_DATA_STRUCTURE sensedata;
@@ -47,7 +53,7 @@ void setup() {
   tugboat.rudderPin = RUDDERPIN;
   tugboat.init();
   XBee.begin(9600); //Xbee comms
-  Serial.begin(9600); // Serial comms, might not be needed
+  Serial.begin(9600); // Serial comms for printing to monitor when offshore
   SENSING.begin(details(sensedata), &Serial); //arduino comms
 }
 
@@ -70,26 +76,14 @@ void loop() {
 
       //SENSE
       // get sensor data from Arduino 2
-      XBee.write("Beep! \n");
+      //XBee.write("Beep! \n");
+
       if (SENSING.receiveData()) {  // this line updates sensor data
         XBee.write("I got data!");  // boat tells us she received data
-        // this code below does some things with timing. Currently not functional
-        // because arudino restarts whenever you plug your laptop into it
-        //        timestamp3 = millis(); //record when data was recieved
-        //        timestamp1 = sensedata.timestamp1;
-        //        timestamp2 = sensedata.timestamp2;
-        //        lag1 = timestamp2 - timestamp1; // record lag from 1 to 2
-        //        lag2 = timestamp3 - timestamp2; //record lag from 2 to 3
-        Serial.println(sensedata.ir_0_data);
       }
       tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
                      sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
                      sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
-
-      // TODO: Put data collection on a different arduino - figure out how this data will come in (thoughts: if pin == -1, use data from serial - else use pin)
-
-      // Sensors is a custom library that defines sensor layout on our particular boat
-      //tugboat.velocity = 50;
 
       tugboat.move();
     } // ----------------------------- REAL TIME CONTROL LOOP ENDS HERE --------------------
@@ -101,9 +95,14 @@ void loop() {
 // TODO: put these functions somewhere else - it's clutter here
 String getOperatorInput()
 {
-  XBee.write("---------------------------\n 0 for stop, 1 for idle, 2 for chase \n");
+  XBee.write("\n----------------------------------------------------------------------------------------------------\n");
+  XBee.write("Beep Boop! My name is Lesley. I'm a world class Robo-Boat here to kick ass and raise hell. Just give me the word...\n");
+  XBee.write("----------------------------------------------------------------------------------------------------\n");
+  XBee.write("\n 1 - Stop\n 2 - Idle\n 3 - Obstacle Avoidance (Not Implemented)\n 4 - Left Wall Follow\n 5 - Right Wall Follow (Not Implemented)\n 6 - Left Circle (Not Implemented) 7 - Right Circle (Not Implemented)\n 8 - Chase (Not Implemented)\n 9 - Search (Not Implemented)\n");
+  
   while (XBee.available() == 0) {}; // do nothing until operator input typed
   command = XBee.read();      // read command string
+  Serial.println(command);
   XBee.write("\nCommand Received\n");
   return command;
 }
@@ -140,18 +139,35 @@ int checkCycleTime() {
 }
 
 int classifyCommand(String command) {
-  if (command == "0") {
-    return 1;
+  if (command == "49") {
+    return 1; //stopped
   }
-  else if (command == "1") {
-    return 2;
+  else if (command == "50") {
+    return 2; //idling
   }
-  else if (command == "2") {
-    return 8;
+  else if (command == "51") {
+    return 3; // obstacle avoidance
+  } 
+
+  else if (command == "52") {
+    return 4; //left wall follow
   }
-  else if (command == "search\n") {
-    return 9;
+  else if (command == "53") {
+    return 5; // right wall follow
   }
+  else if (command == "54") {
+    return 6; // left circle
+  }
+  else if (command == "55") {
+    return 7; // right circle
+  }
+  else if (command == "56") {
+    return 8; //chase
+  }
+  else if (command == "57") {
+    return 9; // search
+  }
+  
   // TODO: add other states
   else {
     //    XBee.write(command);

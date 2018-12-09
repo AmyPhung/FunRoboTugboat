@@ -3,6 +3,32 @@
 
 Autonomous Tugboat - Final project for Fundamentals of Robotics class, Fall 2018
 
+## Quickstart Guide
+Read this if you just want to know how to get Lesley up and running.
+
+### Pre-Requisites
+You need to do everything listed here only once
++ Set up the EasyTransfer library on your laptop. READ THE README IN THIS LINK -> https://github.com/EverardoG/Arduino-EasyTransfer and it will walk you through installation
++ Get the XBee software up and running on your laptop. It's the primary mode of communication between the boat and the laptop. Here's a link. Just go through the "Computer Side" section -> https://github.com/olinrobotics/main/wiki/XBee-Radios
+
+### It's Go Time, Lesley
+#### Boat Side
+1. Unplug all Arduinos from one another. Upload Tugboat_Arduino_1.ino to Arduino 1, Tugboat_Arduino_2.ino to Arduino 2, Tugboat_Arduino_3 to Arduino 3. Arduino 1 is the pixy-cam Arduino, Arduino 2 is the low level sensing Arduino, and Arduino 3 is the THNK/ACT arduino.
+NOTE: There's a "Serial Select" switch on Arduino 2's motor shield. Switch to "SW_SER" to upload code. Switch back to "HW_SER" once code is uploaded.
+2. Connect all Arduinos together to set up the wired data pipeline.
+Arduino 1 Tx -> Arduino 2 Rx
+Arduino 2 Tx -> Arduino 3 Rx
+3. Verify that the XBee is indeed plugged into Arduino 3.
+4. Flip the Arduino switch to "On". Make sure that all the Arduino "On" lights are nice and bright.
+5. To play with the motors, toggle the motor ESTOP so the Hippocampus LED is blinking.
+
+#### Laptop Side
+1. Connect the OCU XBee to your laptop via the adaptor board.
+2. Open up the XCTU.desktop software. Remember, you need to navigate to where the software is installed and use `sudo XCTU ./XCTU.desktop` to make it work.
+3. Click "Add a Radio Module" in the upper left hand corner. Add the OCU XBee. It should show up with "OCU" as its name.
+4. In the upper right, there's a gear icon. Next to it is a computer/ terminal icon. Click it.
+5. Now you'll see three icons above the "Console Log". Click "Open". This makes it so that your laptop XBee is now listening to the boat XBee. You can also type into the "Console Log" to send commands to the boat!
+6. Optional: For offshore debugging, you can plug in the Arduino-Laptop USB cable so that you can read Serial printouts on your laptop. Fear not! For this will not interfere with XBee or Arduino comms so long as you don't try to send Lesley any information via Serial.
 
 ## Sensor Objects
 ### IR
@@ -57,7 +83,7 @@ This object contains all the sensors and pin values for our specific tugboat con
 ##### Methods:
 + `void init()` - initializes a boat, also calls init function for sensors
 + `void update()` - calls update function for all sensors
-+ `void move()` - moves the boat based on heading 
++ `void move()` - moves the boat based on heading
 + `void print()` - not yet implemented
 + `void stateController()` - sets the state for the boat and calls appropriate function
 + `void stop()`
@@ -71,7 +97,7 @@ This object contains all the sensors and pin values for our specific tugboat con
 + `void search()`
 + `void setPropSpeed(int speedPercentage)`
 + `void setHeading(int degHeading)`
-    
+
 ##### Attributes:
 + `Sensors sensors`
 + `int heading` - Heading value in degrees
@@ -89,7 +115,7 @@ This object contains all the sensors and pin values for our specific tugboat con
   + State Other: stop
 
 ## Now With Arduino Comms:
-We're using the EasyTransfer library for inter-Arduino communications. A link to getting this library set up is here -> https://github.com/EverardoG/Arduino-EasyTransfer. 
+We're using the EasyTransfer library for inter-Arduino communications. A link to getting this library set up is here -> https://github.com/EverardoG/Arduino-EasyTransfer.
 
 Arduino 1 passes the `pixydata` object to Arduino 2. Arduino 2 packs the data from `pixydata` and the information collected by its low level sensor suite into `sensedata`. Arduino 2 sends 'sensedata' to Arduino 3. This is all done using the Tx and Rx pins on the Arduinos. This means it uses the same serial channel that you use for the Arduino Serial Monitor. The THINK/ ACT Arduino can print to Serial, but sending it anything through the Serial monitor will confuse it.
 
@@ -120,23 +146,7 @@ We can now communicate with our boat remotely! It's awesome! We use an `Xbee` ob
 
 For it to work, you need to install the XBee software on your laptop first. Here's a really great walkthrough on that -> https://github.com/olinrobotics/main/wiki/XBee-Radios. Once you have that set up, here's the step-by-step guide to setting up comms.
 
-### Setup
-#### Boat Side
-1. Upload code to each Arduino. Arduino 1 is the pixy cam arduino. Arduino 2 is the low level sensing arduino. Arduino 3 is the THINK/ACT arduino.
-2. Make sure that all arduinos are connected to eachother properly.
-Arduino 1 Tx -> Arduino 2 Rx
-Arduino 2 Tx -> Arduino 3 Rx
-3. Verify that the XBee is indeed plugged into Arduino 3.
-4. Turn on the boat.
-
-#### Laptop Side
-1. Connect the OCU XBee to your laptop via the adaptor board.
-2. Open up the XCTU.desktop software. Remember, you need to use `sudo XCTU ./XCTU.desktop` to make it work. 
-3. Click "Add a Radio Module" in the upper left hand corner. Add the OCU XBee. It should show up with "OCU" as its name. 
-4. In the upper right, there's a gear icon. Next to it is a computer/ terminal icon. Click it.
-5. Now you'll see three icons above the "Console Log". Click "Open". This makes it so that your laptop XBee is now listening to the boat XBee. You can also type into the "Console Log" to send commands to the boat!
-
-### Methods of XBee Comms Object 
+### Methods of XBee Comms Object
 + `void begin(int baudrate)` - sets the data baudrate for XBee transmission
 + `void write(char array)` - the boat will send out this char array to the XBee channel
 + `int available()` - returns the number of bytes avaiable to read from XBee channel
@@ -147,4 +157,3 @@ Arduino 2 Tx -> Arduino 3 Rx
 + put sensor object functions in separate folder when complete
 + determine if PWM signals alone would be good enough for sonars (will need other pins if sensors have conflict issues) and update code to reflect that
 + determine how Pixycam data is processed
-

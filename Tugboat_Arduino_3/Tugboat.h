@@ -31,11 +31,14 @@ class Tugboat
                       // 9: search
                       // Other: stop
 
+    //Controller Variables
+    int ctr_count = 0; // counter for ime based control loops
+
     // States
     void stop();
     void idle();
     void avoid();
-    void lwall();
+    void lwall(int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse);
     void rwall();
     void lcircle();
     void rcircle();

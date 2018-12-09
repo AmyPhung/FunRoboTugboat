@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "Tugboat.h"
 
-#define STOPPEDMICRO 2000 //Typically 1500 - sometimes changes, unsure why
+#define STOPPEDMICRO 1450 //Typically 1500 - sometimes changes, unsure why
 
 Tugboat::Tugboat()
 {
@@ -45,7 +45,7 @@ void Tugboat::stateController() {
               avoid(); //use all sensor data to move to a safer position
               break;
       case 4: Serial.println("Robot State: lwall");
-              lwall(); //follow wall on left of boat
+              lwall(64, 30, 0.125, true); //follow wall on left of boat
               break;
       case 5: Serial.println("Robot State: rwall");
               rwall(); //follow wall on right of boat
@@ -84,9 +84,58 @@ void Tugboat::avoid()
 {
 
 }
-void Tugboat::lwall() // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
+void Tugboat::lwall(int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
 {
+  /*
+  Inputs:
+  Kp - proportional control constant
+  ctr_count - initialize at zero, keeps track of where we are in control loop
+  full_cycle - cycle for motor pulse in 1/10 seconds
+  pulse_ratio - fraction of time motors are on (put a decimal, doesn't like fractions)
+  mtr_pulse - initalize at false, determines whether motors are on or off
+  */
+int newHeading = Kp * (ir_0 - ir_1);
 
+// dealing with that god damn edge case
+if (newHeading>45) {
+  newHeading = 45;
+}
+// don't let the boat turn right
+else if (newHeading<0){
+  newHeading = 0;
+}
+
+heading = newHeading;
+
+//switch motor pulse on and off
+Serial.println("----------------------------------");
+Serial.print("ctr_count"); Serial.println(ctr_count);
+Serial.print("pulse_ratio"); Serial.println(pulse_ratio);
+Serial.print("full_cycle"); Serial.println(full_cycle);
+
+
+if (ctr_count <= pulse_ratio*full_cycle)
+{mtr_pulse = true;
+//XBee.write("pulsing motors");
+Serial.println("pulsing motors");
+}
+else {mtr_pulse = false;}
+
+//reset pulse counter
+if (ctr_count >= full_cycle){
+  ctr_count = 0;
+}
+
+// set motor speed
+if (mtr_pulse == true) {
+        velocity = 20;
+      }
+      else {
+        velocity = 0;
+      }
+      
+ctr_count += 1;
+Serial.print("ctr_count: "); Serial.println(ctr_count);
 }
 void Tugboat::rwall()
 {
