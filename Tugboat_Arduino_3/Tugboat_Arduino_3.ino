@@ -79,7 +79,7 @@ void setup() {
   tugboat.rudderPin = RUDDERPIN;
   tugboat.init();
   XBee.begin(9600); //Xbee comms
-  Serial.begin(9600); // Serial comms, might not be needed
+  Serial.begin(9600); // Serial comms for printing to monitor when offshore
   SENSING.begin(details(sensedata), &Serial); //arduino comms
 }
 
@@ -106,60 +106,10 @@ void loop() {
 
       if (SENSING.receiveData()) {  // this line updates sensor data
         XBee.write("I got data!");  // boat tells us she received data
-        // this code below does some things with timing. Currently not functional
-        // because arudino restarts whenever you plug your laptop into it
-        //        timestamp3 = millis(); //record when data was recieved
-        //        timestamp1 = sensedata.timestamp1;
-        //        timestamp2 = sensedata.timestamp2;
-        //        lag1 = timestamp2 - timestamp1; // record lag from 1 to 2
-        //        lag2 = timestamp3 - timestamp2; //record lag from 2 to 3
-        Serial.println(sensedata.ir_0_data);
       }
       tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
                      sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
                      sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
-
-      // fuck it, let's see if this controller works
-      float Kp = 64;
-      int a = Kp * (tugboat.ir_0 - tugboat.ir_1);
-
-      // dealing with those god damn edge cases
-      if (a > 45) {
-        a = 45;
-      }
-
-      else if (a < 0) {
-        a = 0; // just don't even turn left, not worth it
-      }
-
-      //else if (a < -45) {a = -45;} // this was for the turning left edge case but let's just make it not turn left
-
-      tugboat.heading = a;
-      // switch motor pulse on and off
-      if ( ctr_count <= pulse_ratio * full_cycle )
-      {
-        mtr_pulse = true;
-        XBee.write("pulsing motor");
-      }
-      else {
-        mtr_pulse = false;
-      }
-
-      // reset pulse counter
-      if (ctr_count >= full_cycle) {
-        ctr_count = 0;
-      }
-
-
-      // set motor speed
-      if (mtr_pulse == true) {
-        tugboat.velocity = 20;
-      }
-      else {
-        tugboat.velocity = 0;
-      }
-
-      ctr_count += 1;
 
       tugboat.move();
     } // ----------------------------- REAL TIME CONTROL LOOP ENDS HERE --------------------
@@ -171,7 +121,11 @@ void loop() {
 // TODO: put these functions somewhere else - it's clutter here
 String getOperatorInput()
 {
-  XBee.write("\n--------------------------------------------\n 1 - Stop\n 2 - Idle\n 3 - Obstacle Avoidance (Not Implemented)\n 4 - Left Wall Follow\n 5 - Right Wall Follow (Not Implemented)\n 6 - Left Circle (Not Implemented) 7 - Right Circle (Not Implemented)\n 8 - Chase (Not Implemented)\n 9 - Search (Not Implemented)\n");
+  XBee.write("\n----------------------------------------------------------------------------------------------------\n");
+  XBee.write("Beep Boop! My name is Lesley. I'm a world class Robo-Boat here to kick ass and raise hell. Just give me the word...\n");
+  XBee.write("----------------------------------------------------------------------------------------------------\n");
+  XBee.write("\n 1 - Stop\n 2 - Idle\n 3 - Obstacle Avoidance (Not Implemented)\n 4 - Left Wall Follow\n 5 - Right Wall Follow (Not Implemented)\n 6 - Left Circle (Not Implemented) 7 - Right Circle (Not Implemented)\n 8 - Chase (Not Implemented)\n 9 - Search (Not Implemented)\n");
+  
   while (XBee.available() == 0) {}; // do nothing until operator input typed
   command = XBee.read();      // read command string
   Serial.println(command);
