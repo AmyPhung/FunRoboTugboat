@@ -58,6 +58,7 @@ void setup() {
 }
 
 void loop() {
+  tugboat.velocity = 0;
   // Get operator input from serial monitor
   command = getOperatorInput();
   tugboat.state = classifyCommand(command);
@@ -78,13 +79,15 @@ void loop() {
       // get sensor data from Arduino 2
       //XBee.write("Beep! \n");
 
-      if (SENSING.receiveData()) {  // this line updates sensor data
-        XBee.write("I got data!");  // boat tells us she received data
-      }
-      tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
-                     sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
-                     sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
-
+  //    if (SENSING.receiveData()) {  // this line updates sensor data
+  //      XBee.write("I got data!");  // boat tells us she received data
+  //    }
+       tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
+                      sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
+                      sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
+      Serial.println("-------------");
+      Serial.println(tugboat.velocity);
+      Serial.println(tugboat.heading);
       tugboat.move();
     } // ----------------------------- REAL TIME CONTROL LOOP ENDS HERE --------------------
   }
@@ -94,11 +97,11 @@ void loop() {
 
 // TODO: put these functions somewhere else - it's clutter here
 String getOperatorInput()
-{
-  XBee.write("\n----------------------------------------------------------------------------------------------------\n");
-  XBee.write("Beep Boop! My name is Lesley. I'm a world class Robo-Boat here to kick ass and raise hell. Just give me the word...\n");
-  XBee.write("----------------------------------------------------------------------------------------------------\n");
-  XBee.write("\n 1 - Stop\n 2 - Idle\n 3 - Obstacle Avoidance (Not Implemented)\n 4 - Left Wall Follow\n 5 - Right Wall Follow (Not Implemented)\n 6 - Left Circle (Not Implemented) 7 - Right Circle (Not Implemented)\n 8 - Chase (Not Implemented)\n 9 - Search (Not Implemented)\n");
+{ XBee.write("Waiting for command");
+  //XBee.write("\n----------------------------------------------------------------------------------------------------\n");
+  //XBee.write("Beep Boop! My name is Lesley. I'm a world class Robo-Boat here to kick ass and raise hell. Just give me the word...\n");
+  //XBee.write("----------------------------------------------------------------------------------------------------\n");
+  //XBee.write("\n 1 - Stop\n 2 - Idle\n 3 - Obstacle Avoidance (Not Implemented)\n 4 - Left Wall Follow\n 5 - Right Wall Follow (Not Implemented)\n 6 - Left Circle (Not Implemented) 7 - Right Circle (Not Implemented)\n 8 - Chase (Not Implemented)\n 9 - Search (Not Implemented)\n");
 
   while (XBee.available() == 0) {}; // do nothing until operator input typed
   command = XBee.read();      // read command string
@@ -172,23 +175,23 @@ int classifyCommand(String command) {
   // TELEOPERATED CONTROL
   else if (command == "119") { // Keypress: W
     XBee.write("w");
-    tugboat.velocity += 10;
+    tugboat.velocity = 20;
     return 10;
   }
   else if (command == "97") { // Keypress: A
     XBee.write("a");
-    tugboat.heading += 10;
+    tugboat.heading += -10;
     return 11;
   }
   else if (command == "115") { // Keypress: S
     XBee.write("s");
-    tugboat.velocity += -10;
+    tugboat.velocity = 0;
     return 12;
   }
   else if (command == "100") { // Keypress: D
     XBee.write("d");
-    tugboat.heading += -10;
-    return 13; 
+    tugboat.heading += +10;
+    return 13;
   }
 
 

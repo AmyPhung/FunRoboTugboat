@@ -42,7 +42,10 @@ void Tugboat::stateController() {
               idle();
               break;
       case 3: Serial.println("Robot State: avoid");
-              avoid(); //use all sensor data to move to a safer position
+              //TESTING
+              velocity = 10;
+              heading = 100;
+              //avoid(); //use all sensor data to move to a safer position
               break;
       case 4: Serial.println("Robot State: lwall");
               lwall(64, 30, 0.125, true); //follow wall on left of boat
