@@ -99,7 +99,7 @@ String getOperatorInput()
   XBee.write("Beep Boop! My name is Lesley. I'm a world class Robo-Boat here to kick ass and raise hell. Just give me the word...\n");
   XBee.write("----------------------------------------------------------------------------------------------------\n");
   XBee.write("\n 1 - Stop\n 2 - Idle\n 3 - Obstacle Avoidance (Not Implemented)\n 4 - Left Wall Follow\n 5 - Right Wall Follow (Not Implemented)\n 6 - Left Circle (Not Implemented) 7 - Right Circle (Not Implemented)\n 8 - Chase (Not Implemented)\n 9 - Search (Not Implemented)\n");
-  
+
   while (XBee.available() == 0) {}; // do nothing until operator input typed
   command = XBee.read();      // read command string
   Serial.println(command);
@@ -139,6 +139,8 @@ int checkCycleTime() {
 }
 
 int classifyCommand(String command) {
+  // Since command is a string, we compare it to the ASCII code, not the int value
+  // e.g. ASCII for "1" is 49
   if (command == "49") {
     return 1; //stopped
   }
@@ -147,8 +149,7 @@ int classifyCommand(String command) {
   }
   else if (command == "51") {
     return 3; // obstacle avoidance
-  } 
-
+  }
   else if (command == "52") {
     return 4; //left wall follow
   }
@@ -167,7 +168,32 @@ int classifyCommand(String command) {
   else if (command == "57") {
     return 9; // search
   }
-  
+
+  // TELEOPERATED CONTROL
+  else if (command == "119") { // Keypress: W
+    XBee.write("w");
+    tugboat.velocity += 10;
+    return 10;
+  }
+  else if (command == "97") { // Keypress: A
+    XBee.write("a");
+    tugboat.heading += 10;
+    return 11;
+  }
+  else if (command == "115") { // Keypress: S
+    XBee.write("s");
+    tugboat.velocity += -10;
+    return 12;
+  }
+  else if (command == "100") { // Keypress: D
+    XBee.write("d");
+    tugboat.heading += -10;
+    return 13; 
+  }
+
+
+
+
   // TODO: add other states
   else {
     //    XBee.write(command);

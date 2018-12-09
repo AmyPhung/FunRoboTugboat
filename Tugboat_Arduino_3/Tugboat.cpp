@@ -62,6 +62,13 @@ void Tugboat::stateController() {
       case 9: Serial.println("Robot State: search");
               search();
               break;
+
+      //TELEOP COMMANDS
+      case 10: break;
+      case 11: break;
+      case 12: break;
+      case 13: break;
+
       default: Serial.println("Robot State: stop *WARNING* Invalid Input");
               stop();
               break;
@@ -133,7 +140,7 @@ if (mtr_pulse == true) {
       else {
         velocity = 0;
       }
-      
+
 ctr_count += 1;
 Serial.print("ctr_count: "); Serial.println(ctr_count);
 }
