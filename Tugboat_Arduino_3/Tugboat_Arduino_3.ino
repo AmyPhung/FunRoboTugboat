@@ -79,6 +79,8 @@ void loop() {
       // get sensor data from Arduino 2
       //XBee.write("Beep! \n");
 
+      SENSING.receiveData();
+
   //    if (SENSING.receiveData()) {  // this line updates sensor data
   //      XBee.write("I got data!");  // boat tells us she received data
   //    }

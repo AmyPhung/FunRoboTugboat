@@ -39,7 +39,7 @@ class Tugboat
     void idle();
     void avoid();
     void lwall(int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse);
-    void rwall();
+    void rwall(int Kp, int Jp, int des_heading, int des_dist, int vel);
     void lcircle();
     void rcircle();
     void chase();
@@ -54,6 +54,7 @@ class Tugboat
     int rudderPin;
 
   private:
+    float computeWallDistance(int front_ir, int back_ir, int sensor_dist);
 
 };
 

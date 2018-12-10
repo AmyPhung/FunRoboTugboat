@@ -51,7 +51,8 @@ void Tugboat::stateController() {
               lwall(64, 30, 0.125, true); //follow wall on left of boat
               break;
       case 5: Serial.println("Robot State: rwall");
-              rwall(); //follow wall on right of boat
+              // Kp, Jp, des_heading, des_dist, vel
+              rwall(4, 2, 20, 40, 20); //follow wall on right of boat
               break;
       case 6: Serial.println("Robot State: lcircle");
               lcircle(); //circumnavigate an object on left of boat
@@ -138,7 +139,7 @@ if (ctr_count >= full_cycle){
 
 // set motor speed
 if (mtr_pulse == true) {
-        velocity = 20;
+        velocity = 30;
       }
       else {
         velocity = 0;
@@ -147,9 +148,16 @@ if (mtr_pulse == true) {
 ctr_count += 1;
 Serial.print("ctr_count: "); Serial.println(ctr_count);
 }
-void Tugboat::rwall()
-{
+void Tugboat::rwall(int Kp, int Jp, int des_heading, int des_dist, int vel)
+{ float wall_dist = computeWallDistance(ir_4, ir_5, 10); //10 represents distance between IRs - TODO: put in more reasonable location
 
+  heading = -Kp*(ir_5 - ir_4) + -Jp*(des_dist-wall_dist) - des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
+
+  if (heading > -(des_heading)) {
+    heading = - (des_heading-15);
+  }
+
+  velocity = vel;
 }
 void Tugboat::lcircle()
 {
@@ -210,4 +218,23 @@ void Tugboat::setHeading(int degHeading) // Input heading in degrees
     microSec=1000;         // max left turn
   }
   rudder.writeMicroseconds(microSec);
+}
+
+
+
+
+// PRIVATE FUNCTIONS
+float Tugboat::computeWallDistance(int front_ir, int back_ir, int sensor_dist) {
+  int z = (front_ir + back_ir)/2; // Average distance between IRs
+  // float theta;
+  //
+  // if (front_ir - back_ir == 0){
+  //   theta = 0;
+  // }
+  // else {
+  //   theta = PI/2 - atan(sensor_dist/abs(front_ir-back_ir)); // In Radians
+  // }
+  //
+  // float distance = z*cos(theta);
+  return z;
 }
