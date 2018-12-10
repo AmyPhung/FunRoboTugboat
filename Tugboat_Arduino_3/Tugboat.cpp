@@ -38,27 +38,34 @@ void Tugboat::stateController() {
       case 1: Serial.println("Robot State: stop");
               stop();
               break;
-      case 2: Serial.println("Robot State: idle");
-              idle();
+      case 2: Serial.println("Robot State: idle"); // Undocks robot to the left of dock
+              velocity = -30;  // 7 seconds
+              heading = 45;
+              Tugboat::move();
+              delay(7000);
               break;
-      case 3: Serial.println("Robot State: avoid");
+      case 3: Serial.println("Robot State: avoid"); // Undocks robot to right of dock
               //TESTING
-              velocity = 10;
-              heading = 100;
+              velocity = -30;
+              heading = 0;
+              Tugboat::move();
+              delay(7000);
               //avoid(); //use all sensor data to move to a safer position
               break;
       case 4: Serial.println("Robot State: lwall");
-              lwall(64, 30, 0.125, true); //follow wall on left of boat
+              lwall(4, 2, 20, 40, 20);//64, 30, 0.125, true); //follow wall on left of boat
               break;
       case 5: Serial.println("Robot State: rwall");
               // Kp, Jp, des_heading, des_dist, vel
               rwall(4, 2, 20, 40, 20); //follow wall on right of boat
               break;
-      case 6: Serial.println("Robot State: lcircle");
-              lcircle(); //circumnavigate an object on left of boat
+      case 6: Serial.println("Robot State: leftIce");
+              fig8state = 1;
+              leftIce(); //circumnavigate an object on left of boat
               break;
-      case 7: Serial.println("Robot State: rcircle");
-              rcircle(); //circumnavigate an object on right of boat
+      case 7: Serial.println("Robot State: rightIce");
+              fig8state = 1;
+              rightIce(); //circumnavigate an object on right of boat
               break;
       case 8: Serial.println("Robot State: chase");
               chase();
@@ -95,9 +102,17 @@ void Tugboat::avoid()
 {
 
 }
-void Tugboat::lwall(int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
+void Tugboat::lwall(int Kp, int Jp, int des_heading, int des_dist, int vel)//TODO: combine with other function//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
 {
-  /*
+  float wall_dist = computeWallDistance(ir_1, ir_0, 10); //10 represents distance between IRs - TODO: put in more reasonable location
+
+  heading = Kp*(ir_0 - ir_1) + Jp*(des_dist-wall_dist) + des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
+
+  if (heading < (-10)) {//(des_heading)) {
+    heading = -10;//(des_heading-15);
+  }
+
+  velocity = vel;  /*
   Inputs:
   Kp - proportional control constant
   ctr_count - initialize at zero, keeps track of where we are in control loop
@@ -105,6 +120,7 @@ void Tugboat::lwall(int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) /
   pulse_ratio - fraction of time motors are on (put a decimal, doesn't like fractions)
   mtr_pulse - initalize at false, determines whether motors are on or off
   */
+  /*
 int newHeading = Kp * (ir_0 - ir_1);
 
 // dealing with that god damn edge case
@@ -146,27 +162,61 @@ if (mtr_pulse == true) {
       }
 
 ctr_count += 1;
-Serial.print("ctr_count: "); Serial.println(ctr_count);
+Serial.print("ctr_count: "); Serial.println(ctr_count);*/
 }
 void Tugboat::rwall(int Kp, int Jp, int des_heading, int des_dist, int vel)
 { float wall_dist = computeWallDistance(ir_4, ir_5, 10); //10 represents distance between IRs - TODO: put in more reasonable location
 
   heading = -Kp*(ir_5 - ir_4) + -Jp*(des_dist-wall_dist) - des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
 
-  if (heading > -(des_heading)) {
-    heading = - (des_heading-15);
+  if (heading > 10) {
+    heading = 10;
   }
 
   velocity = vel;
 }
-void Tugboat::lcircle()
-{
 
-}
-void Tugboat::rcircle()
+void Tugboat::rightIce()
 {
-
+  heading = 0;
+  velocity = 0;
 }
+
+void Tugboat::leftIce() // pass iceberg on left
+{ // Uses fig8state - attribute of Tugboat
+  switch (fig8state) {
+      case 1: // Follow right wall until iceberg passed on left
+        Tugboat::rwall(4, 2, 20, 40, 20); //TODO: add parameters
+        //XBee.write("state 1");
+        if (ir_1-ir_0 > 20) {// determine if iceberg was passed FRONTIR-BACKIR
+          fig8state = 2;
+        }
+        break;
+      case 2:
+        // XBee.write("state 2"); // Hard turn left until iceberg spotted on right
+        velocity = 20;
+        heading = -45; //Hard turn left
+        delay(1000);
+        if (abs(ir_1-ir_0) > 20) {
+          fig8state = 3;
+        }
+        break;
+      case 3: // Hard turn right until boat is close to wall
+        // XBee.write("state 3");
+        velocity = 20;
+        heading = 45; //Hard turn right
+        delay(1000); //TODO: determine if this is necessary
+        if ((ir_1+ir_0)/2 < 40) {  // Check if boat is close to wall
+          fig8state = 0;
+          state = 7;// Switch to rightIce
+        }
+        break;
+      default:
+        fig8state = 0;
+        break;
+   }
+}
+
 void Tugboat::chase()
 {
 

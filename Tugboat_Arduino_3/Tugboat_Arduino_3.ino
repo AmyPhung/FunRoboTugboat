@@ -44,6 +44,7 @@ int full_cycle = 30; // full motor pulse cycle - 3 seconds
 float pulse_ratio = 0.125; // fraction of time motors are on (put a decimal, doesn't like fractions)
 bool mtr_pulse = false;
 
+
 // creating data structure
 RECIEVE_DATA_STRUCTURE sensedata;
 
@@ -84,6 +85,9 @@ void loop() {
   //    if (SENSING.receiveData()) {  // this line updates sensor data
   //      XBee.write("I got data!");  // boat tells us she received data
   //    }
+       //XBee.write(tugboat.fig8state);
+       //delay(100);
+
        tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
                       sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
                       sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
