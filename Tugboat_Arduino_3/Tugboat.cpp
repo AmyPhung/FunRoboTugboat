@@ -69,11 +69,9 @@ void Tugboat::stateController() {
               rwall(4, 2, 20, 40, 20); //follow wall on right of boat
               break;
       case 6: Serial.println("Robot State: leftIce");
-              fig8state = 1;
               leftIce(); //circumnavigate an object on left of boat
               break;
       case 7: Serial.println("Robot State: rightIce");
-              fig8state = 1;
               rightIce(); //circumnavigate an object on right of boat
               break;
       case 8: Serial.println("Robot State: chase");
@@ -185,35 +183,48 @@ void Tugboat::rwall(int Kp, int Jp, int des_heading, int des_dist, int vel)
   velocity = vel;
 }
 
-void Tugboat::rightIce()
-{
-  heading = 0;
-  velocity = 0;
-}
-
 void Tugboat::leftIce() // pass iceberg on left
 { // Uses fig8state - attribute of Tugboat
   switch (fig8state) {
       case 1: // Follow right wall until iceberg passed on left
-        fig8state = 2;
+        Serial.println("case1");
+        Tugboat::rwall(4, 2, 20, 40, 20); //TODO: add parameters
 
-        // if (ir_0 < 90) {// determine if iceberg was passed FRONTIR-BACKIR
-        //   fig8state = 2;
-        //   break;
-        // }
-        // Tugboat::rwall(4, 2, 20, 40, 20); //TODO: add parameters
+        if (imu_0 > 260 && imu_0 < 280) { //TODO: add parameters // determine if iceberg was passed FRONTIR-BACKIR
+           fig8state = 2;
+           break;
+        }
+        //
         // //XBee.write("state 1");
         break;
       case 2:
+        Serial.println("case2");
         // XBee.write("state 2"); // Hard turn left until iceberg spotted on right
         velocity = 20;
         heading = -45; //Hard turn left
-        //delay(1000);
-        //if (abs(ir_1-ir_0) > 20) {
-        //  fig8state = 3;
-        //}
+
+        if (imu_0 > 80 && imu_0 < 100) {
+          fig8state = 3;
+          break;
+        }
         break;
-      // case 3: // Hard turn right until boat is close to wall
+      case 3: // Hard turn right until boat is close to wall
+        Serial.println("case3");
+        velocity = 20;
+        heading = 45; //Hard turn right
+
+        if (imu_0 > 260 && imu_0 < 280) { 
+          fig8state = 4;
+          break;
+        }
+        break;
+
+      case 4: // Hard turn right until boat is close to wall
+        Serial.println("case4");
+        velocity = 0;
+        heading = 0; //Hard turn right
+
+
       //   // XBee.write("state 3");
       //   velocity = 20;
       //   heading = 45; //Hard turn right
@@ -227,6 +238,12 @@ void Tugboat::leftIce() // pass iceberg on left
         fig8state = 0;
         break;
    }
+}
+
+void Tugboat::rightIce()
+{
+  heading = 0;
+  velocity = 0;
 }
 
 void Tugboat::chase()

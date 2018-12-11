@@ -84,7 +84,6 @@ void loop() {
       tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
                      sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
                      sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
-);
       // Serial.println("-------------");
       // Serial.println(tugboat.velocity);
       // Serial.println(tugboat.heading);
@@ -161,6 +160,7 @@ int classifyCommand(String command) {
     return 5; // right wall follow
   }
   else if (command == "54") {
+    tugboat.fig8state = 1; // Reset fig8 behavior setting
     return 6; // left circle
   }
   else if (command == "55") {

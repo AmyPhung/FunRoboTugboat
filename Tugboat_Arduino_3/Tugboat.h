@@ -58,7 +58,7 @@ class Tugboat
     int propellorPin;
     int rudderPin;
 
-    int fig8state = 1; //TODO: Make this private, here for debug
+    int fig8state = 1;
 
   private:
     float computeWallDistance(int front_ir, int back_ir, int sensor_dist);
