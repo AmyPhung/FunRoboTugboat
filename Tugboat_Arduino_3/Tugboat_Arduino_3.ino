@@ -16,6 +16,8 @@ SoftwareSerial XBee(2, 3); // RX, TX
 
 #include "Tugboat.h"
 
+#include "IMU.h"///////////////////////////////////////////////***************************************************
+
 #define PROPELLORPIN 9;
 #define RUDDERPIN 10;
 
@@ -48,6 +50,8 @@ bool mtr_pulse = false;
 // creating data structure
 RECIEVE_DATA_STRUCTURE sensedata;
 
+IMU imu_0; ///////////////////////////////////////////////***************************************************
+
 void setup() {
   // beloved tugboat object
   tugboat.propellorPin = PROPELLORPIN;
@@ -56,9 +60,11 @@ void setup() {
   XBee.begin(9600); //Xbee comms
   Serial.begin(9600); // Serial comms for printing to monitor when offshore
   SENSING.begin(details(sensedata), &Serial); //arduino comms
+  imu_0.init();///////////////////////////////////////////////***************************************************
 }
 
 void loop() {
+
   tugboat.velocity = 0;
   // Get operator input from serial monitor
   command = getOperatorInput();
@@ -78,23 +84,21 @@ void loop() {
 
       //SENSE
       // get sensor data from Arduino 2
-      //XBee.write("Beep! \n");
-
       SENSING.receiveData();
 
-  //    if (SENSING.receiveData()) {  // this line updates sensor data
-  //      XBee.write("I got data!");  // boat tells us she received data
-  //    }
-       //XBee.write(tugboat.fig8state);
-       //delay(100);
+      imu_0.update();
+      Serial.println("sensedata.imu_0_data");
+      Serial.println(imu_0.data);
+      //Serial.println(sensedata.imu_0_data);
+      Serial.println(sensedata.ir_0_data);
 
-       tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
-                      sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
-                      sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data,
-                      sensedata.imu_0_data);
-      Serial.println("-------------");
-      Serial.println(tugboat.velocity);
-      Serial.println(tugboat.heading);
+      tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
+                     sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
+                     sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);//,
+                     //sensedata.imu_0_data);
+      // Serial.println("-------------");
+      // Serial.println(tugboat.velocity);
+      // Serial.println(tugboat.heading);
       tugboat.move();
     } // ----------------------------- REAL TIME CONTROL LOOP ENDS HERE --------------------
   }

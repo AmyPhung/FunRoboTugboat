@@ -16,8 +16,8 @@ void Tugboat::init() {
 
 void Tugboat::update(int ir_0_data, int ir_1_data, int ir_2_data,
                      int ir_3_data, int ir_4_data, int ir_5_data,
-                     int sonar_0_data, int sonar_1_data, int sonar_2_data,
-                     int imu_0_data) {
+                     int sonar_0_data, int sonar_1_data, int sonar_2_data){//,
+//                     int imu_0_data) {
   ir_0 = ir_0_data;
   ir_1 = ir_1_data;
   ir_2 = ir_2_data;
@@ -29,7 +29,7 @@ void Tugboat::update(int ir_0_data, int ir_1_data, int ir_2_data,
   sonar_1 = sonar_1_data;
   sonar_2 = sonar_2_data;
 
-  imu = imu_0_data;
+//  imu_0 = imu_0_data;
 
   //TODO: update state, commands, sensor data etc
   stateController();

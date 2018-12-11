@@ -27,8 +27,6 @@ void Sensors::init()
     sonar_0.init();
     sonar_1.init();
     sonar_2.init();
-
-    imu_0.init();
 }
 
 void Sensors::print()
@@ -45,8 +43,6 @@ void Sensors::print()
   Serial.print("Sonar 0 data: "); Serial.println(sonar_0.data);
   Serial.print("Sonar 1 data: "); Serial.println(sonar_1.data);
   Serial.print("Sonar 2 data: "); Serial.println(sonar_2.data);
-  Serial.println("IMU Info:");
-  Serial.print("IMU 0 data: "); Serial.println(imu_0.data); // Note: prints with strange characters TODO: Fix this bug
   Serial.println("");
 }
 
@@ -63,5 +59,4 @@ void Sensors::update()
     sonar_1.update();
     sonar_2.update();
 
-    imu_0.update();
 }
