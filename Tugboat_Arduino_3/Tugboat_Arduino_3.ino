@@ -90,7 +90,8 @@ void loop() {
 
        tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
                       sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
-                      sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
+                      sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data,
+                      sensedata.imu_0_data);
       Serial.println("-------------");
       Serial.println(tugboat.velocity);
       Serial.println(tugboat.heading);

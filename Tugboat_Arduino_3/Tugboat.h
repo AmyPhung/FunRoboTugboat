@@ -10,12 +10,14 @@ class Tugboat
     void init();
     void update(int ir_0_data, int ir_1_data, int ir_2_data,
                 int ir_3_data, int ir_4_data, int ir_5_data,
-                int sonar_0_data, int sonar_1_data, int sonar_2_data);
+                int sonar_0_data, int sonar_1_data, int sonar_2_data,
+                int imu_0_data);
     void move();
     void stateController();
 
     int ir_0, ir_1, ir_2, ir_3, ir_4, ir_5;
     int sonar_0, sonar_1, sonar_2;
+    int imu_0;
 
     int heading = 0;  // Turn in degrees
     int velocity = 0; // Between -100 and 100
