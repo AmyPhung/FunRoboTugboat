@@ -186,30 +186,33 @@ void Tugboat::leftIce() // pass iceberg on left
 { // Uses fig8state - attribute of Tugboat
   switch (fig8state) {
       case 1: // Follow right wall until iceberg passed on left
-        Tugboat::rwall(4, 2, 20, 40, 20); //TODO: add parameters
-        //XBee.write("state 1");
-        if (ir_1-ir_0 > 20) {// determine if iceberg was passed FRONTIR-BACKIR
-          fig8state = 2;
-        }
+        fig8state = 2;
+
+        // if (ir_0 < 90) {// determine if iceberg was passed FRONTIR-BACKIR
+        //   fig8state = 2;
+        //   break;
+        // }
+        // Tugboat::rwall(4, 2, 20, 40, 20); //TODO: add parameters
+        // //XBee.write("state 1");
         break;
       case 2:
         // XBee.write("state 2"); // Hard turn left until iceberg spotted on right
         velocity = 20;
         heading = -45; //Hard turn left
-        delay(1000);
-        if (abs(ir_1-ir_0) > 20) {
-          fig8state = 3;
-        }
+        //delay(1000);
+        //if (abs(ir_1-ir_0) > 20) {
+        //  fig8state = 3;
+        //}
         break;
-      case 3: // Hard turn right until boat is close to wall
-        // XBee.write("state 3");
-        velocity = 20;
-        heading = 45; //Hard turn right
-        delay(1000); //TODO: determine if this is necessary
-        if ((ir_1+ir_0)/2 < 40) {  // Check if boat is close to wall
-          fig8state = 0;
-          state = 7;// Switch to rightIce
-        }
+      // case 3: // Hard turn right until boat is close to wall
+      //   // XBee.write("state 3");
+      //   velocity = 20;
+      //   heading = 45; //Hard turn right
+      //   delay(1000); //TODO: determine if this is necessary
+      //   if ((ir_1+ir_0)/2 < 40) {  // Check if boat is close to wall
+      //     fig8state = 0;
+      //     state = 7;// Switch to rightIce
+      //   }
         break;
       default:
         fig8state = 0;

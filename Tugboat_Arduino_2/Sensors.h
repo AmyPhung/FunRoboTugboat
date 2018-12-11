@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "IR.h"
 #include "Sonar.h"
+#include "IMU.h"
 
 #define IR0PIN 0
 #define IR1PIN 1
@@ -35,6 +36,8 @@ class Sensors
     Sonar sonar_0;
     Sonar sonar_1;
     Sonar sonar_2;
+
+    IMU imu_0;
 
   private:
 };
