@@ -54,6 +54,7 @@ void loop() {
 
     // THIS IS FOR ACTUALLY COLLECTING DATA AND WON'T BE USED UNTIL ARDUINO COMMS IS SUCCESSFUL
     sensors.update();
+    sensors.print();
 
     sensedata.ir_0_data =  sensors.ir_0.data;
     sensedata.ir_1_data =  sensors.ir_1.data;
