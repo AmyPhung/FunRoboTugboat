@@ -1,7 +1,5 @@
 #include "IMU.h"
-
 #include "NineAxesMotion.h"        //Contains the bridge code between the API and the Arduino Environment
-#include <Wire.h>
 
 IMU::IMU()
 {

@@ -4,6 +4,7 @@
 
 #include "Arduino.h"
 #include "NineAxesMotion.h"
+#include <Wire.h>
 
 class IMU
 {
@@ -11,7 +12,6 @@ class IMU
     IMU();
     void init();
     void update();
-    void print();
 
     NineAxesMotion imu;
 
