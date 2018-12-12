@@ -23,7 +23,7 @@ SEND_DATA_STRUCTURE sensedata;
 
 unsigned long oldLoopTime = 0;    //create a name for past loop time in milliseconds
 unsigned long newLoopTime = 0;    //create a name for new loop time in milliseconds
-const long controlLoopInterval = 100; //create a name for control loop cycle time in milliseconds
+const long controlLoopInterval = 50; //create a name for control loop cycle time in milliseconds
 
 void setup() {
   Serial.begin(9600);

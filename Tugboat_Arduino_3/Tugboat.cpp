@@ -61,8 +61,9 @@ void Tugboat::stateController() {
               delay(7000);
               //avoid(); //use all sensor data to move to a safer position
               break;
-      case 4: Serial.println("Robot State: lwall");
-              lwall(4, 2, 20, 40, 20);//64, 30, 0.125, true); //follow wall on left of boat
+      case 4: //Serial.println("Robot State: lwall");
+              lwall(8, 8, 30, 0.125, true);//4, 2, 20, 40, 20);//64, 30, 0.125, true); //follow wall on left of boat
+              // Kp, diff, Jp, dist
               break;
       case 5: Serial.println("Robot State: rwall");
               // Kp, Jp, des_heading, des_dist, vel
@@ -109,17 +110,19 @@ void Tugboat::avoid()
 {
 
 }
-void Tugboat::lwall(int Kp, int Jp, int des_heading, int des_dist, int vel)//TODO: combine with other function//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
+void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse)//int Kp, int Jp, int des_heading, int des_dist, int vel)//TODO: combine with other function//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
 {
-  float wall_dist = computeWallDistance(ir_1, ir_0, 10); //10 represents distance between IRs - TODO: put in more reasonable location
-
-  heading = Kp*(ir_0 - ir_1) + Jp*(des_dist-wall_dist) + des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
-
-  if (heading < (-10)) {//(des_heading)) {
-    heading = -10;//(des_heading-15);
-  }
-
-  velocity = vel;  /*
+//  float wall_dist = computeWallDistance(ir_1, ir_0, 10); //10 represents distance between IRs - TODO: put in more reasonable location
+//
+//  heading = Kp*(ir_0 - ir_1) + Jp*(des_dist-wall_dist) + des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
+//
+//  if (heading < (-10)) {//(des_heading)) {
+//    heading = -10;//(des_heading-15);
+//  }
+//
+//  velocity = vel;  
+  
+  /*
   Inputs:
   Kp - proportional control constant
   ctr_count - initialize at zero, keeps track of where we are in control loop
@@ -127,8 +130,23 @@ void Tugboat::lwall(int Kp, int Jp, int des_heading, int des_dist, int vel)//TOD
   pulse_ratio - fraction of time motors are on (put a decimal, doesn't like fractions)
   mtr_pulse - initalize at false, determines whether motors are on or off
   */
-  /*
-int newHeading = Kp * (ir_0 - ir_1);
+  
+int dist_thresh = 30;
+int ir_dist = ir_1 - dist_thresh;
+int ir_diff = (ir_0-ir_1);
+
+int dist_heading = - Jp * ir_dist;
+int diff_heading = Kp * ir_diff;
+
+if (dist_heading < 0) {dist_heading = 0;}
+if (diff_heading < 0) {diff_heading = 0;}
+
+int newHeading = dist_heading + diff_heading;
+Serial.print("ir_diff: "); Serial.print(Kp * ir_diff); Serial.print(" - ir_dist: "); Serial.println(-Jp*ir_dist);
+
+//int avg_ir = (ir_0+ir_1)/2
+//int thresh = avg_ir-30;
+//int newHeading = Kp * thresh;
 
 // dealing with that god damn edge case
 if (newHeading>45) {
@@ -140,37 +158,38 @@ else if (newHeading<0){
 }
 
 heading = newHeading;
-
+velocity = 14;
 //switch motor pulse on and off
-Serial.println("----------------------------------");
-Serial.print("ctr_count"); Serial.println(ctr_count);
-Serial.print("pulse_ratio"); Serial.println(pulse_ratio);
-Serial.print("full_cycle"); Serial.println(full_cycle);
+//Serial.println("----------------------------------");
+//Serial.print("ctr_count"); Serial.println(ctr_count);
+//Serial.print("pulse_ratio"); Serial.println(pulse_ratio);
+//Serial.print("full_cycle"); Serial.println(full_cycle);
 
 
-if (ctr_count <= pulse_ratio*full_cycle)
-{mtr_pulse = true;
-//XBee.write("pulsing motors");
-Serial.println("pulsing motors");
+//if (ctr_count <= pulse_ratio*full_cycle)
+//{mtr_pulse = true;
+////XBee.write("pulsing motors");
+////Serial.println("pulsing motors");
+//}
+//else {mtr_pulse = false;}
+//
+////reset pulse counter
+//if (ctr_count >= full_cycle){
+//  ctr_count = 0;
+//}
+//
+//// set motor speed
+//if (mtr_pulse == true) {
+//        velocity = 30;
+//      }
+//      else {
+//        velocity = 0;
+//      }
+//
+//ctr_count += 1;
+//Serial.print("ctr_count: "); Serial.println(ctr_count);
 }
-else {mtr_pulse = false;}
 
-//reset pulse counter
-if (ctr_count >= full_cycle){
-  ctr_count = 0;
-}
-
-// set motor speed
-if (mtr_pulse == true) {
-        velocity = 30;
-      }
-      else {
-        velocity = 0;
-      }
-
-ctr_count += 1;
-Serial.print("ctr_count: "); Serial.println(ctr_count);*/
-}
 void Tugboat::rwall(int Kp, int Jp, int des_heading, int des_dist, int vel)
 { float wall_dist = computeWallDistance(ir_4, ir_5, 10); //10 represents distance between IRs - TODO: put in more reasonable location
 

@@ -31,7 +31,7 @@ String loopError = "no error";    //create a String for the real time control lo
 unsigned long oldLoopTime = 0;    //create a name for past loop time in milliseconds
 unsigned long newLoopTime = 0;    //create a name for new loop time in milliseconds
 unsigned long cycleTime = 0;      //create a name for elapsed loop cycle time
-const long controlLoopInterval = 100; //create a name for control loop cycle time in milliseconds
+const long controlLoopInterval = 50; //create a name for control loop cycle time in milliseconds
 unsigned long timestamp1 = 0; // timestamp from first Arduino
 unsigned long timestamp2 = 0; // timestamp from second Arduino
 unsigned long timestamp3 = 0; // timestamp for third arduino
@@ -87,6 +87,23 @@ void loop() {
       // Serial.println("-------------");
       // Serial.println(tugboat.velocity);
       // Serial.println(tugboat.heading);
+      if (tugboat.heading == 45) {XBee.write("Bang!\n");}
+      //int ir_diff = tugboat.ir_0-tugboat.ir_1;
+//      int ir_avg = (tugboat.ir_0+tugboat.ir_1)/2;
+//      Serial.print("ir_avg: "); Serial.println(ir_avg);
+
+//      if (ir_diff < 0){XBee.write("<0\n");}
+//      else if (ir_diff == 0){XBee.write("0\n");}
+//      else if (ir_diff == 1){XBee.write("1\n");}
+//      else if (ir_diff == 2){XBee.write("2\n");}
+//      else if (ir_diff == 3){XBee.write("3\n");}
+//      else if (ir_diff == 4){XBee.write("4\n");}
+//      else if (ir_diff == 5){XBee.write("5\n");}
+//      else if (ir_diff == 6){XBee.write("6\n");}
+//      else if (ir_diff == 7){XBee.write("7\n");}
+
+      
+//      Serial.print("ir diff: ");Serial.println(ir_diff);
 
       tugboat.move();
     } // ----------------------------- REAL TIME CONTROL LOOP ENDS HERE --------------------
@@ -97,7 +114,7 @@ void loop() {
 
 // TODO: put these functions somewhere else - it's clutter here
 String getOperatorInput()
-{ XBee.write("Waiting for command");
+{ XBee.write("Awaiting Command:\n");
   //XBee.write("\n----------------------------------------------------------------------------------------------------\n");
   //XBee.write("Beep Boop! My name is Lesley. I'm a world class Robo-Boat here to kick ass and raise hell. Just give me the word...\n");
   //XBee.write("----------------------------------------------------------------------------------------------------\n");
@@ -106,7 +123,7 @@ String getOperatorInput()
   while (XBee.available() == 0) {}; // do nothing until operator input typed
   command = XBee.read();      // read command string
   Serial.println(command);
-  XBee.write("\nCommand Received\n");
+  XBee.write("Command Received\n");
   return command;
 }
 
@@ -144,22 +161,22 @@ int checkCycleTime() {
 int classifyCommand(String command) {
   // Since command is a string, we compare it to the ASCII code, not the int value
   // e.g. ASCII for "1" is 49
-  if (command == "49") {
+  if (command == "49") { //1
     return 1; //stopped
   }
-  else if (command == "50") {
+  else if (command == "50") { //2
     return 2; //idling
   }
-  else if (command == "51") {
+  else if (command == "51") { //3
     return 3; // obstacle avoidance
   }
-  else if (command == "52") {
+  else if (command == "52") { //4
     return 4; //left wall follow
   }
-  else if (command == "53") {
+  else if (command == "53") { //5
     return 5; // right wall follow
   }
-  else if (command == "54") {
+  else if (command == "54") { //6
     tugboat.fig8state = 1; // Reset fig8 behavior setting
     return 6; // left circle
   }
