@@ -62,7 +62,7 @@ void Tugboat::stateController() {
               //avoid(); //use all sensor data to move to a safer position
               break;
       case 4: //Serial.println("Robot State: lwall");
-              lwall(8, 8, 30, 0.125, true);//4, 2, 20, 40, 20);//64, 30, 0.125, true); //follow wall on left of boat
+              lwall(2, 2, 30, 0.125, true);//4, 2, 20, 40, 20);//64, 30, 0.125, true); //follow wall on left of boat
               // Kp, diff, Jp, dist
               break;
       case 5: //Serial.println("Robot State: rwall");
@@ -115,14 +115,20 @@ void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_
 {
   /*
   Inputs:
-  Kp - proportional control constant
+  Kp - proportional control constant on heading
+  Jp - proportional control constant on distance
   ctr_count - initialize at zero, keeps track of where we are in control loop
   full_cycle - cycle for motor pulse in 1/10 seconds
   pulse_ratio - fraction of time motors are on (put a decimal, doesn't like fractions)
   mtr_pulse - initalize at false, determines whether motors are on or off
   */
 
-int dist_thresh = 30;
+// PROPORTIONAL CONTROL CODE, NOT ROBUST ENOUGH
+int min = 0;
+int offset = 20;
+int max = 30;
+
+int dist_thresh = 40;
 int ir_dist = ir_1 - dist_thresh;
 
 int ir_diff = (ir_0-ir_1);
@@ -130,23 +136,34 @@ int ir_diff = (ir_0-ir_1);
 int dist_heading = - Jp * ir_dist;
 int diff_heading = Kp * ir_diff;
 
-if (dist_heading < 0) {dist_heading = 0;}
-if (diff_heading < 0) {diff_heading = 0;}
+Serial.print("dist_heading: "); Serial.print(dist_heading);
+Serial.print(" ... diff_heading: "); Serial.print(diff_heading);
 
-int newHeading = dist_heading + diff_heading;
-Serial.print("ir_diff: "); Serial.print(Kp * ir_diff); Serial.print(" - ir_dist: "); Serial.println(-Jp*ir_dist);
+// if (dist_heading < 0) {dist_heading = 0;}
+// if (diff_heading < 0) {diff_heading = 0;}
 
-// dealing with that god damn edge case
-if (newHeading>45) {
-  newHeading = 45;
-}
-// don't let the boat turn right
-else if (newHeading<0){
-  newHeading = 0;
-}
+int newHeading = dist_heading + diff_heading+20;
+Serial.print(" ... newHeading: "); Serial.println(newHeading);
+
+if (newHeading < min){newHeading = min;}
+else if (newHeading > max){newHeading = max;}
+
+
+//Serial.print("ir_diff: "); Serial.print(Kp * ir_diff); Serial.print(" - ir_dist: "); Serial.println(-Jp*ir_dist);
+
+// // dealing with that god damn edge case
+// if (newHeading>30) {
+//   newHeading = 30;
+// }
+// // don't let the boat turn right
+// else if (newHeading<0){
+//   newHeading = 0;
+// }
 
 heading = newHeading;
 velocity = 14;
+
+
 
 // MOTOR PUSLING CODE, MOST LIKELY UNNECESSARY
 //switch motor pulse on and off
@@ -182,7 +199,7 @@ velocity = 14;
 
 void Tugboat::rwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse)
 {
-  int dist_thresh = 30;
+  int dist_thresh = 40;
   int ir_dist = ir_4 - dist_thresh;
 
   int ir_diff = (ir_5-ir_4);
@@ -196,8 +213,8 @@ void Tugboat::rwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_
   int newHeading = dist_heading + diff_heading;
 
   // dealing with that god damn edge case
-  if (newHeading<-45) {
-    newHeading = -45;
+  if (newHeading<-10) {
+    newHeading = -10;
   }
   // don't let the boat turn right
   else if (newHeading>0){
