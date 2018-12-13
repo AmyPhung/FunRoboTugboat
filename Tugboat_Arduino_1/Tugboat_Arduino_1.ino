@@ -10,6 +10,10 @@
 #include <EasyTransfer.h>
 // Provides SEND_DATA_STRUCTURE for Arduino comms
 #include "ArduinoComms1.h"
+// Custom library for detecting narwhal and dot
+#include "Pixycam.h"
+
+Pixycam pixycam; // Pixycam object for detecting narwhal
 
 EasyTransfer PIXY; // transfer object for arduino comms
 SEND_DATA_STRUCTURE pixydata; // creating data structure
@@ -20,6 +24,7 @@ const long controlLoopInterval = 100; //create a name for control loop cycle tim
 
 void setup() {
   Serial.begin(9600);
+  pixycam.init();
   PIXY.begin(details(pixydata), &Serial);
 }
 
@@ -31,11 +36,8 @@ void loop() {
   if (newLoopTime - oldLoopTime >= controlLoopInterval) {
     oldLoopTime = newLoopTime;
 
-    //TODO: Code to collect Pixycam data
-
-    // TODO: Code to process Pixycam data to what we want to send
-
-    // TODO: Send actual pixycam data
+    pixydata.narwhal_pos = pixycam.narwhal_pos;
+    pixydata.dot_pos = pixycam.dot_pos;
 
     //check and see if a data packet has come in.
     pixydata.timestamp1 = millis();
