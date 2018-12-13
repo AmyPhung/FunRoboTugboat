@@ -45,12 +45,10 @@ void Tugboat::stateController(int cmd_state) {
               rundock();
               break;
       case 4: Serial.println("Robot State: lwall");
-              lwall(8, 8, 30, 0.125, true);//4, 2, 20, 40, 20);//64, 30, 0.125, true); //follow wall on left of boat
-              // Kp, diff, Jp, dist
+              wallFollow(8, 8, 0); //Kp, Jp, side
               break;
       case 5: Serial.println("Robot State: rwall");
-              // Kp, Jp, des_heading, des_dist, vel
-              rwall(4, 2, 20, 40, 20); //follow wall on right of boat
+              wallFollow(8, 8, 1); //Kp, Jp, side
               break;
       case 6: Serial.println("Robot State: leftIce");
               leftIce(); //circumnavigate an object on left of boat
@@ -120,154 +118,43 @@ void Tugboat::rundock()
   Tugboat::move();
   delay(7000);
 }
-void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse) 
+void Tugboat::wallFollow(int Kp, int Jp, int side)
 {
   /*
   Inputs:
-  Kp - proportional control constant
-  ctr_count - initialize at zero, keeps track of where we are in control loop
-  full_cycle - cycle for motor pulse in 1/10 seconds
-  pulse_ratio - fraction of time motors are on (put a decimal, doesn't like fractions)
-  mtr_pulse - initalize at false, determines whether motors are on or off
+  Kp - proportional control constant for heading
+  Jp - proportional control constant for distance
+  side - which side to wall follow on. 0 For left, 1 for right
   */
+  int dist_thresh = 30; // Desired distance to stay away from wall
+  int front_ir, back_ir;
 
-int dist_thresh = 30;
-int ir_dist = ir_1 - dist_thresh;
-
-int ir_diff = (ir_0-ir_1);
-
-int dist_heading = - Jp * ir_dist;
-int diff_heading = Kp * ir_diff;
-
-if (dist_heading < 0) {dist_heading = 0;}
-if (diff_heading < 0) {diff_heading = 0;}
-
-int newHeading = dist_heading + diff_heading;
-Serial.print("ir_diff: "); Serial.print(Kp * ir_diff); Serial.print(" - ir_dist: "); Serial.println(-Jp*ir_dist);
-
-// dealing with that god damn edge case
-if (newHeading>45) {
-  newHeading = 45;
-}
-// don't let the boat turn right
-else if (newHeading<0){
-  newHeading = 0;
-}
-
-heading = newHeading;
-velocity = 14;
-
-// MOTOR PUSLING CODE, MOST LIKELY UNNECESSARY
-//switch motor pulse on and off
-//Serial.println("----------------------------------");
-//Serial.print("ctr_count"); Serial.println(ctr_count);
-//Serial.print("pulse_ratio"); Serial.println(pulse_ratio);
-//Serial.print("full_cycle"); Serial.println(full_cycle);
-
-
-//if (ctr_count <= pulse_ratio*full_cycle)
-//{mtr_pulse = true;
-////XBee.write("pulsing motors");
-////Serial.println("pulsing motors");
-//}
-//else {mtr_pulse = false;}
-//
-////reset pulse counter
-//if (ctr_count >= full_cycle){
-//  ctr_count = 0;
-//}
-//
-//// set motor speed
-//if (mtr_pulse == true) {
-//        velocity = 30;
-//      }
-//      else {
-//        velocity = 0;
-//      }
-//
-//ctr_count += 1;
-//Serial.print("ctr_count: "); Serial.println(ctr_count);
-}
-void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse)//int Kp, int Jp, int des_heading, int des_dist, int vel)//TODO: combine with other function//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
-{
-  /*
-  Inputs:
-  Kp - proportional control constant
-  ctr_count - initialize at zero, keeps track of where we are in control loop
-  full_cycle - cycle for motor pulse in 1/10 seconds
-  pulse_ratio - fraction of time motors are on (put a decimal, doesn't like fractions)
-  mtr_pulse - initalize at false, determines whether motors are on or off
-  */
-
-int dist_thresh = 30;
-int ir_dist = data.ir_1_data - dist_thresh;
-int ir_diff = (data.ir_0_data-data.ir_1_data);
-
-int dist_heading = - Jp * ir_dist;
-int diff_heading = Kp * ir_diff;
-
-if (dist_heading < 0) {dist_heading = 0;}
-if (diff_heading < 0) {diff_heading = 0;}
-
-int newHeading = dist_heading + diff_heading;
-Serial.print("ir_diff: "); Serial.print(Kp * ir_diff); Serial.print(" - ir_dist: "); Serial.println(-Jp*ir_dist);
-
-//int avg_ir = (ir_0+ir_1)/2
-//int thresh = avg_ir-30;
-//int newHeading = Kp * thresh;
-
-// dealing with that god damn edge case
-if (newHeading>45) {
-  newHeading = 45;
-}
-// don't let the boat turn right
-else if (newHeading<0){
-  newHeading = 0;
-}
-
-heading = newHeading;
-velocity = 14;
-//switch motor pulse on and off
-//Serial.println("----------------------------------");
-//Serial.print("ctr_count"); Serial.println(ctr_count);
-//Serial.print("pulse_ratio"); Serial.println(pulse_ratio);
-//Serial.print("full_cycle"); Serial.println(full_cycle);
-
-
-//if (ctr_count <= pulse_ratio*full_cycle)
-//{mtr_pulse = true;
-////XBee.write("pulsing motors");
-////Serial.println("pulsing motors");
-//}
-//else {mtr_pulse = false;}
-//
-////reset pulse counter
-//if (ctr_count >= full_cycle){
-//  ctr_count = 0;
-//}
-//
-//// set motor speed
-//if (mtr_pulse == true) {
-//        velocity = 30;
-//      }
-//      else {
-//        velocity = 0;
-//      }
-//
-//ctr_count += 1;
-//Serial.print("ctr_count: "); Serial.println(ctr_count);
-}
-
-void Tugboat::rwall(int Kp, int Jp, int des_heading, int des_dist, int vel)
-{ float wall_dist = computeWallDistance(data.ir_4_data, data.ir_5_data, 10); //10 represents distance between IRs - TODO: put in more reasonable location
-
-  heading = -Kp*(data.ir_5_data - data.ir_4_data) + -Jp*(des_dist-wall_dist) - des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
-
-  if (heading > 10) {
-    heading = 10;
+  if (side == 0) { // Use left sensors for left wall follow
+    front_ir = data.ir_1_data;
+    back_ir = data.ir_0_data;
+  } else if (side == 1) { // Use right sensors for right wall follow
+    front_ir = data.ir_4_data;
+    back_ir = data.ir_5_data;
   }
 
-  velocity = vel;
+  int ir_dist = front_ir - dist_thresh;
+  int ir_diff = (back_ir-front_ir);
+  int dist_heading, diff_heading;
+
+  if (side == 0) { // Use logic to avoid left wall
+    dist_heading = - Jp * ir_dist;
+    diff_heading = Kp * ir_diff;
+    if (dist_heading < 0) {dist_heading = 0;} // Prevent robot from turning left
+    if (diff_heading < 0) {diff_heading = 0;} // Prevent robot from turning left
+  } else if (side == 1) { // Use logic to avoid right wall
+    dist_heading = Jp * ir_dist;
+    diff_heading = - Kp * ir_diff;
+    if (dist_heading > 0) {dist_heading = 0;} // Prevent robot from turning right
+    if (diff_heading > 0) {diff_heading = 0;} // Prevent robot from turning right
+  }
+
+  heading = dist_heading + diff_heading;
+  velocity = 14;
 }
 
 void Tugboat::leftIce() // pass iceberg on left

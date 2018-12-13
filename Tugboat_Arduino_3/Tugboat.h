@@ -54,8 +54,7 @@ class Tugboat
     void stop();
     void lundock();
     void rundock();
-    void lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse);//int Kp, int Jp, int des_heading, int des_dist, int vel);//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse);
-    void rwall(int Kp, int Jp, int des_heading, int des_dist, int vel);
+    void wallFollow(int Kp, int Jp, int side);
     void leftIce();
     void rightIce();
     void placeholder1();
