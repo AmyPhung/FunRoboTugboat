@@ -28,7 +28,6 @@ struct SEND_DATA_STRUCTURE
 
   int narwhal_pos = 10000;
   int dot_pos = 10000;
-
 };
 
 #endif

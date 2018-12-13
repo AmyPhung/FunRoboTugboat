@@ -12,7 +12,7 @@ class Tugboat
   public:
     Tugboat();
     void init();
-    void update();
+    void update(RECIEVE_DATA_STRUCTURE sensedata);
     void move();
     void stateController(int state);
 

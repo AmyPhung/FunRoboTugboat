@@ -15,8 +15,8 @@ void Tugboat::init() {
   rudder.writeMicroseconds(STOPPEDMICRO);
 }
 
-void Tugboat::update() {
-  sensors.update();
+void Tugboat::update(RECIEVE_DATA_STRUCTURE sensedata) {
+  sensors.update(sensedata);
   stateController(state);
 }
 

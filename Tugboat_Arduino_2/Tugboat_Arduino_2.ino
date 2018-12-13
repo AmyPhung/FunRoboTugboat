@@ -60,6 +60,8 @@ void loop() {
     if (PIXY.receiveData()) {
       // update sensedata with new pixy data
       sensedata.timestamp1 = pixydata.timestamp1;
+      sensedata.narwhal_pos = pixydata.narwhal_pos;
+      sensedata.dot_pos = pixydata.dot_pos;
     }
 
     // Update sonar data

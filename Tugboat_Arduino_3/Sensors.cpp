@@ -10,25 +10,17 @@ void Sensors::init()
     ir_1.pin = IR1PIN;
     ir_2.pin = IR2PIN;
     ir_3.pin = IR3PIN;
-    // ir_4.pin = IR4PIN;
-    // ir_5.pin = IR5PIN;
-
-    // sonar_0.pin = SONAR0PIN;
-    // sonar_1.pin = SONAR1PIN;
-    // sonar_2.pin = SONAR2PIN;
+    ir_4.pin = IR4PIN;
+    ir_5.pin = IR5PIN;
 
     ir_0.init();
     ir_1.init();
     ir_2.init();
     ir_3.init();
-    // ir_4.init();
-    // ir_5.init();
+    ir_4.init();
+    ir_5.init();
 
     imu.init();
-
-    // sonar_0.init();
-    // sonar_1.init();
-    // sonar_2.init();
 }
 
 void Sensors::print()
@@ -38,29 +30,28 @@ void Sensors::print()
   Serial.print("IR 1 data: "); Serial.println(ir_1.data);
   Serial.print("IR 2 data: "); Serial.println(ir_2.data);
   Serial.print("IR 3 data: "); Serial.println(ir_3.data);
-  // Serial.print("IR 4 data: "); Serial.println(ir_4.data);
-  // Serial.print("IR 5 data: "); Serial.println(ir_5.data);
-  // Serial.println("");
-  // Serial.println("Sonar Info:");
-  // Serial.print("Sonar 0 data: "); Serial.println(sonar_0.data);
-  // Serial.print("Sonar 1 data: "); Serial.println(sonar_1.data);
-  // Serial.print("Sonar 2 data: "); Serial.println(sonar_2.data);
+  Serial.print("IR 4 data: "); Serial.println(ir_4.data);
+  Serial.print("IR 5 data: "); Serial.println(ir_5.data);
+  Serial.println("");
+  Serial.println("IMU Info:");
+  Serial.print("IMU data: "); Serial.println(imu.data);
   Serial.println("");
 }
 
-void Sensors::update()
+void Sensors::update(RECIEVE_DATA_STRUCTURE sensedata)
 {
     ir_0.update();
     ir_1.update();
     ir_2.update();
     ir_3.update();
-    // ir_4.update();
-    // ir_5.update();
+    ir_4.update();
+    ir_5.update();
 
     imu.update();
 
-    // sonar_0.update();
-    // sonar_1.update();
-    // sonar_2.update();
-
+    narwhal_pos = sensedata.narwhal_pos;
+    dot_pos = sensedata.dot_pos;
+    sonar_0_data = sensedata.sonar_0_data;
+    sonar_1_data = sensedata.sonar_1_data;
+    sonar_2_data = sensedata.sonar_2_data;
 }
