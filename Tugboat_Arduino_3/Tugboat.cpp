@@ -197,13 +197,6 @@ void Tugboat::circleIce(int side) // circle iceberg
   if front ir is triggered then need to turn less sharp
   */
 }
-
-void Tugboat::rightIce()
-{
-  heading = 0;
-  velocity = 0;
-}
-
 void Tugboat::placeholder1()
 {
 
