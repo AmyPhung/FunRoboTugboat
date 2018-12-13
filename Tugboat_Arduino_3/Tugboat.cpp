@@ -51,10 +51,10 @@ void Tugboat::stateController(int cmd_state) {
               wallFollow(8, 8, 1); //Kp, Jp, side
               break;
       case 6: Serial.println("Robot State: leftIce");
-              leftIce(); //circumnavigate an object on left of boat
+              circleIce(0); //circumnavigate an object on left of boat
               break;
       case 7: Serial.println("Robot State: rightIce");
-              rightIce(); //circumnavigate an object on right of boat
+              circleIce(1); //circumnavigate an object on right of boat
               break;
       case 8: Serial.println("Robot State: placeholder1");
               placeholder1();
@@ -127,6 +127,7 @@ void Tugboat::wallFollow(int Kp, int Jp, int side)
   side - which side to wall follow on. 0 For left, 1 for right
   */
   int dist_thresh = 30; // Desired distance to stay away from wall
+
   int front_ir, back_ir;
 
   if (side == 0) { // Use left sensors for left wall follow
@@ -157,63 +158,44 @@ void Tugboat::wallFollow(int Kp, int Jp, int side)
   velocity = 14;
 }
 
-void Tugboat::leftIce() // pass iceberg on left
-{ // Uses fig8state - attribute of Tugboat
+void Tugboat::circleIce(int side) // circle iceberg
+{
+  /*
+  Inputs:
+  side - which side obstacle is on follow on. 0 For left, 1 for right
+  */
+  int default_heading = 30; // Heading that allows perfect circumnavigation
+  int threshold = 50; // IR reading that constitutes an iceberg
 
-  // TODO: Move this code over to mission
-  // switch (fig8state) {
-  //     case 1: // Follow right wall until iceberg passed on left
-  //       Serial.println("case1");
-  //       Tugboat::rwall(4, 2, 20, 40, 20); //TODO: add parameters
-  //
-  //       if (imu_0 > 260 && imu_0 < 280) { //TODO: add parameters // determine if iceberg was passed FRONTIR-BACKIR
-  //          fig8state = 2;
-  //          break;
-  //       }
-  //       //
-  //       // //XBee.write("state 1");
-  //       break;
-  //     case 2:
-  //       Serial.println("case2");
-  //       // XBee.write("state 2"); // Hard turn left until iceberg spotted on right
-  //       velocity = 20;
-  //       heading = -45; //Hard turn left
-  //
-  //       if (imu_0 > 80 && imu_0 < 100) {
-  //         fig8state = 3;
-  //         break;
-  //       }
-  //       break;
-  //     case 3: // Hard turn right until boat is close to wall
-  //       Serial.println("case3");
-  //       velocity = 20;
-  //       heading = 45; //Hard turn right
-  //
-  //       if (imu_0 > 260 && imu_0 < 280) {
-  //         fig8state = 4;
-  //         break;
-  //       }
-  //       break;
-  //
-  //     case 4: // Hard turn right until boat is close to wall
-  //       Serial.println("case4");
-  //       velocity = 0;
-  //       heading = 0; //Hard turn right
-  //
-  //
-  //     //   // XBee.write("state 3");
-  //     //   velocity = 20;
-  //     //   heading = 45; //Hard turn right
-  //     //   delay(1000); //TODO: determine if this is necessary
-  //     //   if ((ir_1+ir_0)/2 < 40) {  // Check if boat is close to wall
-  //     //     fig8state = 0;
-  //     //     state = 7;// Switch to rightIce
-  //     //   }
-  //       break;
-  //     default:
-  //       fig8state = 0;
-  //       break;
-  //  }
+  int front_ir, back_ir;
+  int s = 0; // Used for changing sign of constants for left/right use
+
+  if (side == 0) { // Use left sensors for left wall follow
+    front_ir = data.ir_1_data;
+    back_ir = data.ir_0_data;
+    s = -1;
+  } else if (side == 1) { // Use right sensors for right wall follow
+    front_ir = data.ir_4_data;
+    back_ir = data.ir_5_data;
+    s = 1;
+  }
+
+  // Front IR, Back IR, Sonar
+  //int dist_thresh = 30; // Desired distance to stay away from iceberg
+
+  if (back_ir < threshold) {
+    heading = s*default_heading + s*20;
+  } else if (front_ir < threshold) {
+    heading = s*default_heading - s*10;
+  } else {
+    heading = s*default_heading;
+  }
+  velocity = 15;
+  /*
+
+  if back ir is triggered then need to turn sharper too far back
+  if front ir is triggered then need to turn less sharp
+  */
 }
 
 void Tugboat::rightIce()
@@ -235,9 +217,11 @@ void Tugboat::placeholder2()
 int Tugboat::classifyMission(String mission_cmd)
 {
   if (mission_cmd == "49") { //1
+    missions.fig8state = 0; // Reset figure 8 progress
     return 1; // fwdFigureEight
   }
   else if (mission_cmd == "50") { //2
+    missions.fig8state = 0; // Reset figure 8 progress
     return 2; // bwdFigureEight
   }
   else {

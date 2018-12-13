@@ -55,8 +55,7 @@ class Tugboat
     void lundock();
     void rundock();
     void wallFollow(int Kp, int Jp, int side);
-    void leftIce();
-    void rightIce();
+    void circleIce();
     void placeholder1();
     void placeholder2();
 
@@ -67,8 +66,6 @@ class Tugboat
     Servo rudder;
     int propellorPin;
     int rudderPin;
-
-    int fig8state = 1;
 
   private:
     float computeWallDistance(int front_ir, int back_ir, int sensor_dist);

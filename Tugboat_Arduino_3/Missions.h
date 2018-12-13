@@ -7,8 +7,6 @@ class Missions
 {
   public:
     Missions();
-    void fwdFigureEight();
-    void bwdFigureEight();
 
     RECIEVE_DATA_STRUCTURE data;
 
@@ -16,7 +14,10 @@ class Missions
     int cmd_heading = 0;  // Turn in degrees
     int cmd_velocity = 0; // Between -100 and 100
 
-    //int fig8state = 0;
+    // Figure 8
+    int fig8state = 0; // Used for keeping track of current progress in figure 8
+    void fwdFigureEight();
+    void bwdFigureEight();
 };
 
 #endif

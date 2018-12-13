@@ -179,7 +179,6 @@ int classifyCommand(String command) {
     return 5; // right wall follow
   }
   else if (command == "54") { //6
-    tugboat.fig8state = 1; // Reset fig8 behavior setting
     return 6; // left circle
   }
   else if (command == "55") {
