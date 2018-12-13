@@ -23,7 +23,7 @@ SEND_DATA_STRUCTURE sensedata;
 
 unsigned long oldLoopTime = 0;    //create a name for past loop time in milliseconds
 unsigned long newLoopTime = 0;    //create a name for new loop time in milliseconds
-const long controlLoopInterval = 100; //create a name for control loop cycle time in milliseconds
+const long controlLoopInterval = 50; //create a name for control loop cycle time in milliseconds
 
 void setup() {
   Serial.begin(9600);
@@ -67,8 +67,6 @@ void loop() {
     sensedata.sonar_1_data = sensors.sonar_1.data;
     sensedata.sonar_2_data = sensors.sonar_2.data;
 
-    sensedata.imu_0_data = sensors.imu_0.data;
-
 //    Serial.println("------------------------------------------------------------------");
 //    Serial.print(sensedata.ir_0_data); Serial.print(" - "); Serial.print(sensedata.ir_1_data); Serial.print(" - ");
 //    Serial.print(sensedata.ir_2_data); Serial.print(" - "); Serial.print(sensedata.ir_3_data); Serial.print(" - ");
@@ -76,6 +74,8 @@ void loop() {
 //    Serial.print(sensedata.sonar_0_data); Serial.print(" - "); Serial.print(sensedata.sonar_1_data); Serial.print(" - ");
 //    Serial.println(sensedata.sonar_2_data);
     // pass data along to next arduino
+    //Serial.println(sensedata.ir_5_data);
+    //Serial.println(sensedata.imu_0_data);
     SENSORS.sendData();
 
   } // ---------------------REAL TIME CONTROL LOOP ENDS HERE -------------------------

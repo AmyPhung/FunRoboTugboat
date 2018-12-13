@@ -1,10 +1,11 @@
 #ifndef IMU_h
 #define IMU_h
+//Note: conflicts with softwareserial, cannot be on arduino 2
 
 
 #include "Arduino.h"
 #include "NineAxesMotion.h"
-#include <Wire.h>
+//#include <Wire.h>
 
 class IMU
 {

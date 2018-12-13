@@ -23,8 +23,6 @@ struct RECIEVE_DATA_STRUCTURE
   int sonar_0_data = 0;
   int sonar_1_data = 0;
   int sonar_2_data = 0;
-
-  int imu_0_data = 0;
 };
 
 #endif

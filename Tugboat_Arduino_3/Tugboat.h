@@ -2,6 +2,7 @@
 #define Tugboat_h
 
 #include <Servo.h>
+#include "IMU.h" // Not on sense arduino since needs I2C, conflicts with IR
 
 class Tugboat
 {
@@ -10,11 +11,13 @@ class Tugboat
     void init();
     void update(int ir_0_data, int ir_1_data, int ir_2_data,
                 int ir_3_data, int ir_4_data, int ir_5_data,
-                int sonar_0_data, int sonar_1_data, int sonar_2_data,
-                int imu_0_data);
+                int sonar_0_data, int sonar_1_data, int sonar_2_data);
     void move();
     void stateController();
 
+    IMU imu; // Need to attach IMU object
+
+    // Sensor data storage
     int ir_0, ir_1, ir_2, ir_3, ir_4, ir_5;
     int sonar_0, sonar_1, sonar_2;
     int imu_0;
@@ -40,7 +43,7 @@ class Tugboat
     void stop();
     void idle();
     void avoid();
-    void lwall(int Kp, int Jp, int des_heading, int des_dist, int vel);//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse);
+    void lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse);//int Kp, int Jp, int des_heading, int des_dist, int vel);//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse);
     void rwall(int Kp, int Jp, int des_heading, int des_dist, int vel);
     void leftIce();
     void rightIce();
@@ -55,7 +58,7 @@ class Tugboat
     int propellorPin;
     int rudderPin;
 
-    int fig8state = 1; //TODO: Make this private, here for debug
+    int fig8state = 1;
 
   private:
     float computeWallDistance(int front_ir, int back_ir, int sensor_dist);
