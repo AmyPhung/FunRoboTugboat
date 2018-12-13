@@ -62,8 +62,14 @@ void loop() {
 
   tugboat.velocity = 0;
   // Get operator input from serial monitor
+  XBee.write("Input Command\n");
   command = getOperatorInput();
   tugboat.state = classifyCommand(command);
+  if (tugboat.state == 0) { // For missions, need a second command to indicate which
+    XBee.write("Input Mission\n");
+    String mission_cmd = getOperatorInput(); // Get string representing mission command
+    tugboat.mission_state = tugboat.classifyMission(mission_cmd); // Convert string to int representation
+  }
 
   if (command == "stop") realTimeRunStop = false;     // skip real time inner loop
   else realTimeRunStop = true;                        // Set loop flag to run = true
@@ -81,9 +87,10 @@ void loop() {
       // get sensor data from Arduino 2
       SENSING.receiveData();
 
-      tugboat.update(sensedata.ir_0_data, sensedata.ir_1_data, sensedata.ir_2_data,
-                     sensedata.ir_3_data, sensedata.ir_4_data, sensedata.ir_5_data,
-                     sensedata.sonar_0_data, sensedata.sonar_1_data, sensedata.sonar_2_data);
+      // Update heading and velocity based on sensors and state
+      tugboat.update(sensedata);
+
+
       // Serial.println("-------------");
       // Serial.println(tugboat.velocity);
       // Serial.println(tugboat.heading);
@@ -102,10 +109,10 @@ void loop() {
 //      else if (ir_diff == 6){XBee.write("6\n");}
 //      else if (ir_diff == 7){XBee.write("7\n");}
 
-      
+
 //      Serial.print("ir diff: ");Serial.println(ir_diff);
 
-      tugboat.move();
+      tugboat.move(); // Moves boat based on current heading and velocity cmd
     } // ----------------------------- REAL TIME CONTROL LOOP ENDS HERE --------------------
   }
 }
@@ -114,12 +121,7 @@ void loop() {
 
 // TODO: put these functions somewhere else - it's clutter here
 String getOperatorInput()
-{ XBee.write("Awaiting Command:\n");
-  //XBee.write("\n----------------------------------------------------------------------------------------------------\n");
-  //XBee.write("Beep Boop! My name is Lesley. I'm a world class Robo-Boat here to kick ass and raise hell. Just give me the word...\n");
-  //XBee.write("----------------------------------------------------------------------------------------------------\n");
-  //XBee.write("\n 1 - Stop\n 2 - Idle\n 3 - Obstacle Avoidance (Not Implemented)\n 4 - Left Wall Follow\n 5 - Right Wall Follow (Not Implemented)\n 6 - Left Circle (Not Implemented) 7 - Right Circle (Not Implemented)\n 8 - Chase (Not Implemented)\n 9 - Search (Not Implemented)\n");
-
+{
   while (XBee.available() == 0) {}; // do nothing until operator input typed
   command = XBee.read();      // read command string
   Serial.println(command);
