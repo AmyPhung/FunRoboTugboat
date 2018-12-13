@@ -87,7 +87,7 @@ void loop() {
       // Serial.println("-------------");
       // Serial.println(tugboat.velocity);
       // Serial.println(tugboat.heading);
-      
+
 //      Serial.print("ir diff: ");Serial.println(ir_diff);
 
       tugboat.move();
@@ -195,6 +195,11 @@ int classifyCommand(String command) {
     XBee.write("d");
     tugboat.heading += +10;
     return 13;
+  }
+  else if (command = "120") { // Keypress: X
+    XBee.write("x");
+    tugboat.velocity = -25;
+    return 14;
   }
 
 
