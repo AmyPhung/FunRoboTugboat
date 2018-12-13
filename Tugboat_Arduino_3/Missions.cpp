@@ -34,6 +34,75 @@ void Missions::fwdFigureEight()
       break;
   }
 }
+
+void Missions::circleMission()
+{ // TODO: Document angles - currently assumes boat starts facing away from ice
+  switch(circleState) {
+    case 0: // Follow left wall until IMU reads ~180 degrees
+      tugboat_state = 2; // turn out of dock
+      if ((data.imu_0_data < 285)
+           && (data.imu_0_data > 180)) // if you've turned 75 degrees left
+      {
+        circleState = 1; //switch to next state
+      }
+      break;
+    case 1: // Circle around object on right until IMU reads ~0 degrees
+      tugboat_state = 4; //left wall follow
+      if ((data.imu_0_data < 270) //check to see we've turned far enough
+           && (data.imu_0_data > 90)
+           && (data.ir_5_data <100)) //if iceberg spotted on right
+      {
+        circleState = 2; //switch to next state
+      }
+      break;
+    case 2: // Circle around object on left until IMU reads ~180
+      tugboat_state = 7; // circle iceberg on right
+      if ((data.imu_0_data > 250) && (data.imu_0_data < 290))
+      {
+        circleState = 3;
+      }
+      break;
+    case 3:
+    tugboat_state = 8; // straighten out cross finish line
+    break;
+    default: // Stop robot TODO: remove this, currently here for testing
+      tugboat_state = 1;
+      break;
+  }
+}
+
+// void Missions::circleMission()
+// {
+//   switch(fig8state){
+//     case 0:
+//     tugboat_state = 2; // turn out of dock
+//     if ((data.imu_0_data < 285)
+//          && (data.imu_0_data > 180)) // if you've turned 75 degrees left
+//     {
+//       fig8state = 1; //switch to next state
+//     }
+//   }
+//   break;
+//   case 1:
+//   tugboat_state = 4; //left wall follow
+//   if ((data.ir_5_data < 40) && (data.imu_0_data < 270)
+//        && (data.imu_0_data > 90)) //if iceberg spotted on right
+//   {
+//     fig8state = 2; //switch to next state
+//   }
+//   break;
+//   case 2:
+//   tugboat_state = 7; // circle iceberg on right
+//   if ((data.imu_0_data > 250) && (data.imu_0_data < 290))
+//   {
+//     fig8state = 3;
+//   }
+//   case 3:
+//   tugboat_state = 10; // cross finish line
+//   break;
+// }
+
+
 void Missions::bwdFigureEight()
 {
   //TODO: Remove test
