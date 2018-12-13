@@ -51,8 +51,8 @@ void Tugboat::stateController(int cmd_state) {
       case 7: Serial.println("Robot State: rightIce");
               circleIce(1); //circumnavigate an object on right of boat
               break;
-      case 8: Serial.println("Robot State: placeholder1");
-              placeholder1();
+      case 8: Serial.println("Robot State: dock");
+              dock();
               break;
       case 9: Serial.println("Robot State: placeholder2");
               placeholder2();
@@ -196,9 +196,10 @@ void Tugboat::circleIce(int side) // circle iceberg
   if front ir is triggered then need to turn less sharp
   */
 }
-void Tugboat::placeholder1()
+void Tugboat::dock()
 {
-
+  velocity = 15;
+  heading = sensors.dot_pos; // TODO: tune this
 }
 void Tugboat::placeholder2()
 {

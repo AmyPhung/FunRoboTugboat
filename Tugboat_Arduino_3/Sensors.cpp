@@ -36,6 +36,12 @@ void Sensors::print()
   Serial.println("IMU Info:");
   Serial.print("IMU data: "); Serial.println(imu.data);
   Serial.println("");
+  Serial.println("Imported Data:");
+  Serial.print("Narwhal Position: "); Serial.println(narwhal_pos);
+  Serial.print("Dot Position: "); Serial.println(dot_pos);
+  Serial.print("Sonar 0 data: "); Serial.println(sonar_0_data);
+  Serial.print("Sonar 1 data: "); Serial.println(sonar_1_data);
+  Serial.print("Sonar 2 data: "); Serial.println(sonar_2_data);
 }
 
 void Sensors::update(RECIEVE_DATA_STRUCTURE sensedata)
