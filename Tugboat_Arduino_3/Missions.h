@@ -16,8 +16,7 @@ class Missions
     int cmd_heading = 0;  // Turn in degrees
     int cmd_velocity = 0; // Between -100 and 100
 
-  private:
-
+    //int fig8state = 0;
 };
 
 #endif

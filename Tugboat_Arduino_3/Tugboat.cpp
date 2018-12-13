@@ -82,7 +82,7 @@ void Tugboat::stateController(int cmd_state) {
 // TODO: Each of these functions is its own "arbiter" (brain) that thinks with that state goal in mind
 void Tugboat::mission(int mission_num)
 {
-  missions.data = data; // Update data
+  missions.data = data; // Update mission data based tugboat data
   switch (mission_num) {
     case 1:
       missions.fwdFigureEight();
@@ -121,16 +121,6 @@ void Tugboat::rundock()
 }
 void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse)//int Kp, int Jp, int des_heading, int des_dist, int vel)//TODO: combine with other function//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
 {
-//  float wall_dist = computeWallDistance(ir_1, ir_0, 10); //10 represents distance between IRs - TODO: put in more reasonable location
-//
-//  heading = Kp*(ir_0 - ir_1) + Jp*(des_dist-wall_dist) + des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
-//
-//  if (heading < (-10)) {//(des_heading)) {
-//    heading = -10;//(des_heading-15);
-//  }
-//
-//  velocity = vel;
-
   /*
   Inputs:
   Kp - proportional control constant
