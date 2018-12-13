@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "Tugboat.h"
 
 #define STOPPEDMICRO 1450 //Typically 1500 - sometimes changes, unsure why
@@ -16,25 +15,14 @@ void Tugboat::init() {
   rudder.writeMicroseconds(STOPPEDMICRO);
 }
 
-void Tugboat::update(int ir_0_data, int ir_1_data, int ir_2_data,
-                     int ir_3_data, int ir_4_data, int ir_5_data,
-                     int sonar_0_data, int sonar_1_data, int sonar_2_data) {
-  ir_0 = ir_0_data;
-  ir_1 = ir_1_data;
-  ir_2 = ir_2_data;
-  ir_3 = ir_3_data;
-  ir_4 = ir_4_data;
-  ir_5 = ir_5_data;
-
-  sonar_0 = sonar_0_data;
-  sonar_1 = sonar_1_data;
-  sonar_2 = sonar_2_data;
+void Tugboat::update(RECIEVE_DATA_STRUCTURE recieved_data) {
+  data = recieved_data;
 
   imu.update();
-  imu_0 = imu.data; // Comes onboard, not from Serial
+  data.imu_0_data = imu.data; // Comes onboard, not from Serial
 
   //TODO: update state, commands, sensor data etc
-  stateController();
+  stateController(state);
 }
 
 void Tugboat::move() {
@@ -42,26 +30,21 @@ void Tugboat::move() {
   setHeading(heading);
 }
 
-void Tugboat::stateController() {
-  switch (state) {
+void Tugboat::stateController(int cmd_state) {
+  switch (cmd_state) {
+      case 0: Serial.println("Robot State: mission"); // Uses custom mission code based on second input
+              mission(mission_state); // Run mission code with selected mission
+              break;
       case 1: Serial.println("Robot State: stop");
               stop();
               break;
-      case 2: Serial.println("Robot State: idle"); // Undocks robot to the left of dock
-              velocity = -30;  // 7 seconds
-              heading = 45;
-              Tugboat::move();
-              delay(7000);
+      case 2: Serial.println("Robot State: lundock"); // Undocks robot to the left of dock
+              lundock();
               break;
-      case 3: Serial.println("Robot State: avoid"); // Undocks robot to right of dock
-              //TESTING
-              velocity = -30;
-              heading = 0;
-              Tugboat::move();
-              delay(7000);
-              //avoid(); //use all sensor data to move to a safer position
+      case 3: Serial.println("Robot State: rundock"); // Undocks robot to right of dock
+              rundock();
               break;
-      case 4: //Serial.println("Robot State: lwall");
+      case 4: Serial.println("Robot State: lwall");
               lwall(8, 8, 30, 0.125, true);//4, 2, 20, 40, 20);//64, 30, 0.125, true); //follow wall on left of boat
               // Kp, diff, Jp, dist
               break;
@@ -75,11 +58,11 @@ void Tugboat::stateController() {
       case 7: Serial.println("Robot State: rightIce");
               rightIce(); //circumnavigate an object on right of boat
               break;
-      case 8: Serial.println("Robot State: chase");
-              chase();
+      case 8: Serial.println("Robot State: placeholder1");
+              placeholder1();
               break;
-      case 9: Serial.println("Robot State: search");
-              search();
+      case 9: Serial.println("Robot State: placeholder2");
+              placeholder2();
               break;
 
       //TELEOP COMMANDS
@@ -97,18 +80,44 @@ void Tugboat::stateController() {
 // State Functions -----------------------------------------------------------
 // TODO: Each of these functions should modify heading and velocity (and state if necessary for estop)
 // TODO: Each of these functions is its own "arbiter" (brain) that thinks with that state goal in mind
+void Tugboat::mission(int mission_num)
+{
+  missions.data = data; // Update data
+  switch (mission_num) {
+    case 1:
+      missions.fwdFigureEight();
+      Tugboat::missionTugboat();
+      break;
+    case 2:
+      missions.bwdFigureEight();
+      Tugboat::missionTugboat();
+      break;
+    default:
+      Tugboat::stop();
+      break;
+  }
+}
+
 void Tugboat::stop()
 {
   velocity = 0;
   heading = 0;
 }
-void Tugboat::idle()
+void Tugboat::lundock()
 {
-
+  //TODO: insert undock code here
+  velocity = -30;  // 7 seconds
+  heading = 45;
+  Tugboat::move();
+  delay(7000);
 }
-void Tugboat::avoid()
+void Tugboat::rundock()
 {
-
+  //TODO: insert undock code here
+  velocity = -30;  // 7 seconds
+  heading = -45;
+  Tugboat::move();
+  delay(7000);
 }
 void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse)//int Kp, int Jp, int des_heading, int des_dist, int vel)//TODO: combine with other function//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
 {
@@ -120,8 +129,8 @@ void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_
 //    heading = -10;//(des_heading-15);
 //  }
 //
-//  velocity = vel;  
-  
+//  velocity = vel;
+
   /*
   Inputs:
   Kp - proportional control constant
@@ -130,10 +139,10 @@ void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_
   pulse_ratio - fraction of time motors are on (put a decimal, doesn't like fractions)
   mtr_pulse - initalize at false, determines whether motors are on or off
   */
-  
+
 int dist_thresh = 30;
-int ir_dist = ir_1 - dist_thresh;
-int ir_diff = (ir_0-ir_1);
+int ir_dist = data.ir_1_data - dist_thresh;
+int ir_diff = (data.ir_0_data-data.ir_1_data);
 
 int dist_heading = - Jp * ir_dist;
 int diff_heading = Kp * ir_diff;
@@ -191,9 +200,9 @@ velocity = 14;
 }
 
 void Tugboat::rwall(int Kp, int Jp, int des_heading, int des_dist, int vel)
-{ float wall_dist = computeWallDistance(ir_4, ir_5, 10); //10 represents distance between IRs - TODO: put in more reasonable location
+{ float wall_dist = computeWallDistance(data.ir_4_data, data.ir_5_data, 10); //10 represents distance between IRs - TODO: put in more reasonable location
 
-  heading = -Kp*(ir_5 - ir_4) + -Jp*(des_dist-wall_dist) - des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
+  heading = -Kp*(data.ir_5_data - data.ir_4_data) + -Jp*(des_dist-wall_dist) - des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
 
   if (heading > 10) {
     heading = 10;
@@ -204,59 +213,61 @@ void Tugboat::rwall(int Kp, int Jp, int des_heading, int des_dist, int vel)
 
 void Tugboat::leftIce() // pass iceberg on left
 { // Uses fig8state - attribute of Tugboat
-  switch (fig8state) {
-      case 1: // Follow right wall until iceberg passed on left
-        Serial.println("case1");
-        Tugboat::rwall(4, 2, 20, 40, 20); //TODO: add parameters
 
-        if (imu_0 > 260 && imu_0 < 280) { //TODO: add parameters // determine if iceberg was passed FRONTIR-BACKIR
-           fig8state = 2;
-           break;
-        }
-        //
-        // //XBee.write("state 1");
-        break;
-      case 2:
-        Serial.println("case2");
-        // XBee.write("state 2"); // Hard turn left until iceberg spotted on right
-        velocity = 20;
-        heading = -45; //Hard turn left
-
-        if (imu_0 > 80 && imu_0 < 100) {
-          fig8state = 3;
-          break;
-        }
-        break;
-      case 3: // Hard turn right until boat is close to wall
-        Serial.println("case3");
-        velocity = 20;
-        heading = 45; //Hard turn right
-
-        if (imu_0 > 260 && imu_0 < 280) { 
-          fig8state = 4;
-          break;
-        }
-        break;
-
-      case 4: // Hard turn right until boat is close to wall
-        Serial.println("case4");
-        velocity = 0;
-        heading = 0; //Hard turn right
-
-
-      //   // XBee.write("state 3");
-      //   velocity = 20;
-      //   heading = 45; //Hard turn right
-      //   delay(1000); //TODO: determine if this is necessary
-      //   if ((ir_1+ir_0)/2 < 40) {  // Check if boat is close to wall
-      //     fig8state = 0;
-      //     state = 7;// Switch to rightIce
-      //   }
-        break;
-      default:
-        fig8state = 0;
-        break;
-   }
+  // TODO: Move this code over to mission
+  // switch (fig8state) {
+  //     case 1: // Follow right wall until iceberg passed on left
+  //       Serial.println("case1");
+  //       Tugboat::rwall(4, 2, 20, 40, 20); //TODO: add parameters
+  //
+  //       if (imu_0 > 260 && imu_0 < 280) { //TODO: add parameters // determine if iceberg was passed FRONTIR-BACKIR
+  //          fig8state = 2;
+  //          break;
+  //       }
+  //       //
+  //       // //XBee.write("state 1");
+  //       break;
+  //     case 2:
+  //       Serial.println("case2");
+  //       // XBee.write("state 2"); // Hard turn left until iceberg spotted on right
+  //       velocity = 20;
+  //       heading = -45; //Hard turn left
+  //
+  //       if (imu_0 > 80 && imu_0 < 100) {
+  //         fig8state = 3;
+  //         break;
+  //       }
+  //       break;
+  //     case 3: // Hard turn right until boat is close to wall
+  //       Serial.println("case3");
+  //       velocity = 20;
+  //       heading = 45; //Hard turn right
+  //
+  //       if (imu_0 > 260 && imu_0 < 280) {
+  //         fig8state = 4;
+  //         break;
+  //       }
+  //       break;
+  //
+  //     case 4: // Hard turn right until boat is close to wall
+  //       Serial.println("case4");
+  //       velocity = 0;
+  //       heading = 0; //Hard turn right
+  //
+  //
+  //     //   // XBee.write("state 3");
+  //     //   velocity = 20;
+  //     //   heading = 45; //Hard turn right
+  //     //   delay(1000); //TODO: determine if this is necessary
+  //     //   if ((ir_1+ir_0)/2 < 40) {  // Check if boat is close to wall
+  //     //     fig8state = 0;
+  //     //     state = 7;// Switch to rightIce
+  //     //   }
+  //       break;
+  //     default:
+  //       fig8state = 0;
+  //       break;
+  //  }
 }
 
 void Tugboat::rightIce()
@@ -265,13 +276,36 @@ void Tugboat::rightIce()
   velocity = 0;
 }
 
-void Tugboat::chase()
+void Tugboat::placeholder1()
 {
 
 }
-void Tugboat::search()
+void Tugboat::placeholder2()
 {
 
+}
+
+// Mission Functions ---------------------------------------------------------
+int Tugboat::classifyMission(String mission_cmd)
+{
+  if (mission_cmd == "49") { //1
+    return 1; // fwdFigureEight
+  }
+  else if (mission_cmd == "50") { //2
+    return 2; // bwdFigureEight
+  }
+  else {
+    return 0; // stop
+  }
+}
+
+void Tugboat::missionTugboat(){ // Allows mission to set boat state
+  if (missions.tugboat_state == -1) { // If mission declares manual control, use specified values
+    velocity = missions.cmd_velocity;
+    heading = missions.cmd_heading;
+  } else {
+    stateController(missions.tugboat_state); // Run desired robot state based on mission cmd
+  }
 }
 
 // Safety Function -----------------------------------------------------------
