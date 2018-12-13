@@ -163,7 +163,10 @@ int checkCycleTime() {
 int classifyCommand(String command) {
   // Since command is a string, we compare it to the ASCII code, not the int value
   // e.g. ASCII for "1" is 49
-  if (command == "49") { //1
+  if (command == "48") { //0
+    return 0;
+  }
+  else if (command == "49") { //1
     return 1; //stopped
   }
   else if (command == "50") { //2
@@ -179,7 +182,6 @@ int classifyCommand(String command) {
     return 5; // right wall follow
   }
   else if (command == "54") { //6
-    tugboat.fig8state = 1; // Reset fig8 behavior setting
     return 6; // left circle
   }
   else if (command == "55") {
@@ -213,13 +215,14 @@ int classifyCommand(String command) {
     tugboat.heading += +10;
     return 13;
   }
-
-
-
-
+  else if (command = "120") { // Keypress: X
+    XBee.write("x");
+    tugboat.velocity = -25;
+    return 14;
+  }
   // TODO: add other states
   else {
     //    XBee.write(command);
-    return 0;
+    return 1;
   }
 }
