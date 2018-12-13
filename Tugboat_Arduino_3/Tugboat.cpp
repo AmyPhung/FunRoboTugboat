@@ -165,21 +165,25 @@ void Tugboat::circleIce(int side) // circle iceberg
   side - which side obstacle is on follow on. 0 For left, 1 for right
   */
   int default_heading = 30; // Heading that allows perfect circumnavigation
-  int threshold = 50; // IR reading that constitutes an iceberg
+  int threshold = 80; // IR reading that constitutes an iceberg
 
   int front_ir, back_ir;
   int s = 0; // Used for changing sign of constants for left/right use
 
   if (side == 0) { // Use left sensors for left wall follow
+    Serial.println("Left following");
     front_ir = data.ir_1_data;
     back_ir = data.ir_0_data;
     s = -1;
   } else if (side == 1) { // Use right sensors for right wall follow
+    Serial.println("Right following");
     front_ir = data.ir_4_data;
     back_ir = data.ir_5_data;
     s = 1;
   }
-
+  Serial.println(front_ir);
+  Serial.println(back_ir);
+  
   // Front IR, Back IR, Sonar
   //int dist_thresh = 30; // Desired distance to stay away from iceberg
 
