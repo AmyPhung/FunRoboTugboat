@@ -42,6 +42,8 @@ void loop() {
     //check and see if a data packet has come in.
     pixydata.timestamp1 = millis();
     PIXY.sendData();
+
+    pixycam.print();
   }
   // ---------------------REAL TIME CONTROL LOOP ENDS HERE -------------------------
 }
