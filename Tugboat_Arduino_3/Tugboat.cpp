@@ -120,6 +120,74 @@ void Tugboat::rundock()
   Tugboat::move();
   delay(7000);
 }
+void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse) 
+{
+  /*
+  Inputs:
+  Kp - proportional control constant
+  ctr_count - initialize at zero, keeps track of where we are in control loop
+  full_cycle - cycle for motor pulse in 1/10 seconds
+  pulse_ratio - fraction of time motors are on (put a decimal, doesn't like fractions)
+  mtr_pulse - initalize at false, determines whether motors are on or off
+  */
+
+int dist_thresh = 30;
+int ir_dist = ir_1 - dist_thresh;
+
+int ir_diff = (ir_0-ir_1);
+
+int dist_heading = - Jp * ir_dist;
+int diff_heading = Kp * ir_diff;
+
+if (dist_heading < 0) {dist_heading = 0;}
+if (diff_heading < 0) {diff_heading = 0;}
+
+int newHeading = dist_heading + diff_heading;
+Serial.print("ir_diff: "); Serial.print(Kp * ir_diff); Serial.print(" - ir_dist: "); Serial.println(-Jp*ir_dist);
+
+// dealing with that god damn edge case
+if (newHeading>45) {
+  newHeading = 45;
+}
+// don't let the boat turn right
+else if (newHeading<0){
+  newHeading = 0;
+}
+
+heading = newHeading;
+velocity = 14;
+
+// MOTOR PUSLING CODE, MOST LIKELY UNNECESSARY
+//switch motor pulse on and off
+//Serial.println("----------------------------------");
+//Serial.print("ctr_count"); Serial.println(ctr_count);
+//Serial.print("pulse_ratio"); Serial.println(pulse_ratio);
+//Serial.print("full_cycle"); Serial.println(full_cycle);
+
+
+//if (ctr_count <= pulse_ratio*full_cycle)
+//{mtr_pulse = true;
+////XBee.write("pulsing motors");
+////Serial.println("pulsing motors");
+//}
+//else {mtr_pulse = false;}
+//
+////reset pulse counter
+//if (ctr_count >= full_cycle){
+//  ctr_count = 0;
+//}
+//
+//// set motor speed
+//if (mtr_pulse == true) {
+//        velocity = 30;
+//      }
+//      else {
+//        velocity = 0;
+//      }
+//
+//ctr_count += 1;
+//Serial.print("ctr_count: "); Serial.println(ctr_count);
+}
 void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse)//int Kp, int Jp, int des_heading, int des_dist, int vel)//TODO: combine with other function//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
 {
   /*
