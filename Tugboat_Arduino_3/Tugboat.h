@@ -12,15 +12,13 @@ class Tugboat
   public:
     Tugboat();
     void init();
-    void update(RECIEVE_DATA_STRUCTURE sensedata);
+    void update();
     void move();
     void stateController(int state);
 
-    IMU imu; // Need to attach IMU object
-
     // Sensor data storage
-    RECIEVE_DATA_STRUCTURE data;
-    int imu_0;
+    Sensors sensors;
+
 
     int heading = 0;  // Turn in degrees
     int velocity = 0; // Between -100 and 100

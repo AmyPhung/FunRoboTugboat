@@ -88,7 +88,7 @@ void loop() {
       SENSING.receiveData();
 
       // Update heading and velocity based on sensors and state
-      tugboat.update(sensedata);
+      tugboat.update();
 
 
       // Serial.println("-------------");

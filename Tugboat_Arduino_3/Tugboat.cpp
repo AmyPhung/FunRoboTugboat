@@ -7,7 +7,7 @@ Tugboat::Tugboat()
 }
 
 void Tugboat::init() {
-  imu.init();
+  sensors.init();
 
   propellor.attach(propellorPin);
   propellor.writeMicroseconds(STOPPEDMICRO);
@@ -15,13 +15,8 @@ void Tugboat::init() {
   rudder.writeMicroseconds(STOPPEDMICRO);
 }
 
-void Tugboat::update(RECIEVE_DATA_STRUCTURE recieved_data) {
-  data = recieved_data;
-
-  imu.update();
-  data.imu_0_data = imu.data; // Comes onboard, not from Serial
-
-  //TODO: update state, commands, sensor data etc
+void Tugboat::update() {
+  sensors.update();
   stateController(state);
 }
 
@@ -81,7 +76,7 @@ void Tugboat::stateController(int cmd_state) {
 // TODO: Each of these functions is its own "arbiter" (brain) that thinks with that state goal in mind
 void Tugboat::mission(int mission_num)
 {
-  missions.data = data; // Update mission data based tugboat data
+  missions.sensors = sensors; // Update mission data based tugboat data
   switch (mission_num) {
     case 1:
       missions.fwdFigureEight();
@@ -131,11 +126,11 @@ void Tugboat::wallFollow(int Kp, int Jp, int side)
   int front_ir, back_ir;
 
   if (side == 0) { // Use left sensors for left wall follow
-    front_ir = data.ir_1_data;
-    back_ir = data.ir_0_data;
+    front_ir = sensors.ir_1.data;
+    back_ir = sensors.ir_0.data;
   } else if (side == 1) { // Use right sensors for right wall follow
-    front_ir = data.ir_4_data;
-    back_ir = data.ir_5_data;
+    front_ir = sensors.ir_2.data;
+    back_ir = sensors.ir_3.data;
   }
 
   int ir_dist = front_ir - dist_thresh;
@@ -172,18 +167,18 @@ void Tugboat::circleIce(int side) // circle iceberg
 
   if (side == 0) { // Use left sensors for left wall follow
     Serial.println("Left following");
-    front_ir = data.ir_1_data;
-    back_ir = data.ir_0_data;
+    front_ir = sensors.ir_1.data;
+    back_ir = sensors.ir_0.data;
     s = -1;
   } else if (side == 1) { // Use right sensors for right wall follow
     Serial.println("Right following");
-    front_ir = data.ir_4_data;
-    back_ir = data.ir_5_data;
+    front_ir = sensors.ir_2.data;
+    back_ir = sensors.ir_3.data;
     s = 1;
   }
   Serial.println(front_ir);
   Serial.println(back_ir);
-  
+
   // Front IR, Back IR, Sonar
   //int dist_thresh = 30; // Desired distance to stay away from iceberg
 

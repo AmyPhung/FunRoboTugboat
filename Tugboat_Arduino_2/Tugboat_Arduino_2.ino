@@ -63,9 +63,9 @@ void loop() {
     sensedata.ir_4_data =  sensors.ir_4.data;
     sensedata.ir_5_data =  sensors.ir_5.data;
 
-    sensedata.sonar_0_data = sensors.sonar_0.data;
-    sensedata.sonar_1_data = sensors.sonar_1.data;
-    sensedata.sonar_2_data = sensors.sonar_2.data;
+    // sensedata.sonar_0_data = sensors.sonar_0.data;
+    // sensedata.sonar_1_data = sensors.sonar_1.data;
+    // sensedata.sonar_2_data = sensors.sonar_2.data;
 
 //    Serial.println("------------------------------------------------------------------");
 //    Serial.print(sensedata.ir_0_data); Serial.print(" - "); Serial.print(sensedata.ir_1_data); Serial.print(" - ");

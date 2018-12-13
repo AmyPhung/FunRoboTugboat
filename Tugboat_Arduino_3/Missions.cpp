@@ -11,21 +11,21 @@ void Missions::fwdFigureEight()
   switch(fig8state) {
     case 0: // Follow left wall until IMU reads ~180 degrees
       tugboat_state = 4; // Left wall follow
-      if ((data.imu_0_data > 170) && (data.imu_0_data < 190)) {
+      if ((sensors.imu.data > 170) && (sensors.imu.data < 190)) {
         fig8state = 1;
       }
       break;
     case 1: // Circle around object on right until IMU reads ~0 degrees
       tugboat_state = 7; // Right ice circumnavigation
-      if ((data.imu_0_data > 350) && (data.imu_0_data < 360) || // Data wraps from 360 to 0
-          (data.imu_0_data > 0) && (data.imu_0_data < 10)) {
+      if ((sensors.imu.data > 350) && (sensors.imu.data < 360) || // Data wraps from 360 to 0
+          (sensors.imu.data > 0) && (sensors.imu.data < 10)) {
         fig8state = 2;
       }
       break;
     case 2: // Circle around object on left until IMU reads ~180
       tugboat_state = 6; // Left ice circumnavigation
-      if ((data.imu_0_data > 170) && (data.imu_0_data < 190) || // Data wraps from 360 to 0
-          (data.imu_0_data > 0) && (data.imu_0_data < 10)) {
+      if ((sensors.imu.data > 170) && (sensors.imu.data < 190) || // Data wraps from 360 to 0
+          (sensors.imu.data > 0) && (sensors.imu.data < 10)) {
         fig8state = 3;
       }
       break;
