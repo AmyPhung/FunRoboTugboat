@@ -213,6 +213,11 @@ int classifyCommand(String command) {
     tugboat.heading += +10;
     return 13;
   }
+  else if (command = "120") { // Keypress: X
+  XBee.write("x");
+  tugboat.velocity = -25;
+  return 14;
+  }
 
 
 

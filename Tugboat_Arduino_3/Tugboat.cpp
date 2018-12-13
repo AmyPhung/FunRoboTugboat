@@ -70,6 +70,7 @@ void Tugboat::stateController(int cmd_state) {
       case 11: break;
       case 12: break;
       case 13: break;
+      case 14: break;
 
       default: Serial.println("Robot State: stop *WARNING* Invalid Input");
               stop();
