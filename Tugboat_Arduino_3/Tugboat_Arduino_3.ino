@@ -87,21 +87,6 @@ void loop() {
       // Serial.println("-------------");
       // Serial.println(tugboat.velocity);
       // Serial.println(tugboat.heading);
-      if (tugboat.heading == 45) {XBee.write("Bang!\n");}
-      //int ir_diff = tugboat.ir_0-tugboat.ir_1;
-//      int ir_avg = (tugboat.ir_0+tugboat.ir_1)/2;
-//      Serial.print("ir_avg: "); Serial.println(ir_avg);
-
-//      if (ir_diff < 0){XBee.write("<0\n");}
-//      else if (ir_diff == 0){XBee.write("0\n");}
-//      else if (ir_diff == 1){XBee.write("1\n");}
-//      else if (ir_diff == 2){XBee.write("2\n");}
-//      else if (ir_diff == 3){XBee.write("3\n");}
-//      else if (ir_diff == 4){XBee.write("4\n");}
-//      else if (ir_diff == 5){XBee.write("5\n");}
-//      else if (ir_diff == 6){XBee.write("6\n");}
-//      else if (ir_diff == 7){XBee.write("7\n");}
-
       
 //      Serial.print("ir diff: ");Serial.println(ir_diff);
 

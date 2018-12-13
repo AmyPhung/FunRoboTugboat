@@ -65,9 +65,9 @@ void Tugboat::stateController() {
               lwall(8, 8, 30, 0.125, true);//4, 2, 20, 40, 20);//64, 30, 0.125, true); //follow wall on left of boat
               // Kp, diff, Jp, dist
               break;
-      case 5: Serial.println("Robot State: rwall");
+      case 5: //Serial.println("Robot State: rwall");
               // Kp, Jp, des_heading, des_dist, vel
-              rwall(4, 2, 20, 40, 20); //follow wall on right of boat
+              rwall(8, 8, 30, 0.125, true); //follow wall on right of boat
               break;
       case 6: Serial.println("Robot State: leftIce");
               leftIce(); //circumnavigate an object on left of boat
@@ -110,18 +110,8 @@ void Tugboat::avoid()
 {
 
 }
-void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse)//int Kp, int Jp, int des_heading, int des_dist, int vel)//TODO: combine with other function//int Kp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
+void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse) // TODO: Each function should start with safetyCheck() function that changes to avoid state if needed
 {
-//  float wall_dist = computeWallDistance(ir_1, ir_0, 10); //10 represents distance between IRs - TODO: put in more reasonable location
-//
-//  heading = Kp*(ir_0 - ir_1) + Jp*(des_dist-wall_dist) + des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
-//
-//  if (heading < (-10)) {//(des_heading)) {
-//    heading = -10;//(des_heading-15);
-//  }
-//
-//  velocity = vel;  
-  
   /*
   Inputs:
   Kp - proportional control constant
@@ -130,9 +120,10 @@ void Tugboat::lwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_
   pulse_ratio - fraction of time motors are on (put a decimal, doesn't like fractions)
   mtr_pulse - initalize at false, determines whether motors are on or off
   */
-  
+
 int dist_thresh = 30;
 int ir_dist = ir_1 - dist_thresh;
+
 int ir_diff = (ir_0-ir_1);
 
 int dist_heading = - Jp * ir_dist;
@@ -143,10 +134,6 @@ if (diff_heading < 0) {diff_heading = 0;}
 
 int newHeading = dist_heading + diff_heading;
 Serial.print("ir_diff: "); Serial.print(Kp * ir_diff); Serial.print(" - ir_dist: "); Serial.println(-Jp*ir_dist);
-
-//int avg_ir = (ir_0+ir_1)/2
-//int thresh = avg_ir-30;
-//int newHeading = Kp * thresh;
 
 // dealing with that god damn edge case
 if (newHeading>45) {
@@ -159,6 +146,8 @@ else if (newHeading<0){
 
 heading = newHeading;
 velocity = 14;
+
+// MOTOR PUSLING CODE, MOST LIKELY UNNECESSARY
 //switch motor pulse on and off
 //Serial.println("----------------------------------");
 //Serial.print("ctr_count"); Serial.println(ctr_count);
@@ -190,16 +179,37 @@ velocity = 14;
 //Serial.print("ctr_count: "); Serial.println(ctr_count);
 }
 
-void Tugboat::rwall(int Kp, int Jp, int des_heading, int des_dist, int vel)
-{ float wall_dist = computeWallDistance(ir_4, ir_5, 10); //10 represents distance between IRs - TODO: put in more reasonable location
+void Tugboat::rwall(int Kp, int Jp, int full_cycle, float pulse_ratio, bool mtr_pulse)
+{
+  int dist_thresh = 30;
+  int ir_dist = ir_4 - dist_thresh;
 
-  heading = -Kp*(ir_5 - ir_4) + -Jp*(des_dist-wall_dist) - des_heading; //Controller designed for maintaining 0 value, adding des_heading makes "default" state the turn it takes to achieve pool navigation
+  int ir_diff = (ir_5-ir_4);
 
-  if (heading > 10) {
-    heading = 10;
+  int dist_heading = Jp * ir_dist;
+  int diff_heading = - Kp * ir_diff;
+
+  if (dist_heading > 0) {dist_heading = 0;}
+  if (diff_heading > 0) {diff_heading = 0;}
+
+  int newHeading = dist_heading + diff_heading;
+
+  // dealing with that god damn edge case
+  if (newHeading<-45) {
+    newHeading = -45;
+  }
+  // don't let the boat turn right
+  else if (newHeading>0){
+    newHeading = 0;
   }
 
-  velocity = vel;
+  heading = newHeading;
+  velocity = 14;
+
+  Serial.print("ir_5 (back): "); Serial.print(ir_5); Serial.print(" ... ir_4 (front): "); Serial.println(ir_4);
+  // Serial.print("dist_heading: "); Serial.print(dist_heading); Serial.print(" ... diff_heading: "); Serial.print(diff_heading);
+  // Serial.print(" ... Final Heading: "); Serial.println(heading);
+
 }
 
 void Tugboat::leftIce() // pass iceberg on left
@@ -232,7 +242,7 @@ void Tugboat::leftIce() // pass iceberg on left
         velocity = 20;
         heading = 45; //Hard turn right
 
-        if (imu_0 > 260 && imu_0 < 280) { 
+        if (imu_0 > 260 && imu_0 < 280) {
           fig8state = 4;
           break;
         }
