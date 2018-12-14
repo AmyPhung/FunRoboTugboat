@@ -8,34 +8,104 @@ Missions::Missions()
 // Main Mission Functions
 void Missions::fwdFigureEight()
 { // TODO: Document angles - currently assumes boat starts facing away from ice
+  // Undocks, follows left wall to 0 deg heading, then enter 8 loop.
+  // Infinite state loop switching between right and left object circling at 180 deg
   switch(fig8state) {
-    case 0: // Follow left wall until IMU reads ~180 degrees
-      tugboat_state = 4; // Left wall follow
-      if ((sensors.imu.data > 170) && (sensors.imu.data < 190)) {
+    case 0: // Undock and turn Left
+      tugboat_state = 2; // turn out of dock to the left
+      if ((sensors.imu.data < 285) && (sensors.imu.data > 180)) { // turn only ~75 deg left
         fig8state = 1;
       }
-      break;
-    case 1: // Circle around object on right until IMU reads ~0 degrees
-      tugboat_state = 7; // Right ice circumnavigation
+    case 1: // Follow left wall until IMU reads ~0 degrees
+      tugboat_state = 4; // Left wall follow
       if ((sensors.imu.data > 350) && (sensors.imu.data < 360) || // Data wraps from 360 to 0
           (sensors.imu.data > 0) && (sensors.imu.data < 10)) {
         fig8state = 2;
       }
       break;
-    case 2: // Circle around object on left until IMU reads ~180
-      tugboat_state = 6; // Left ice circumnavigation
-      if ((sensors.imu.data > 170) && (sensors.imu.data < 190) || // Data wraps from 360 to 0
-          (sensors.imu.data > 0) && (sensors.imu.data < 10)) {
+    case 2: // Circle around object on right until IMU reads ~180 degrees
+      tugboat_state = 7; // Right ice circumnavigation
+      if ((sensors.imu.data > 170) && (sensors.imu.data < 190)) {
         fig8state = 3;
+      }
+      break;
+    case 3: // Circle around object on left until IMU reads ~180 degrees
+      tugboat_state = 6; // Left ice circumnavigation
+      if ((sensors.imu.data > 170) && (sensors.imu.data < 190)) {
+        fig8state = 2; // cycle back to circle the other iceberg
       }
       break;
     default: // Stop robot TODO: remove this, currently here for testing
       tugboat_state = 1;
       break;
   }
+
+
+
+
+
+
+  // switch(fig8state) {
+  //   case 0: // Follow left wall until IMU reads ~180 degrees
+  //     tugboat_state = 4; // Left wall follow
+  //     if ((sensors.imu.data > 170) && (sensors.imu.data < 190)) {
+  //       fig8state = 1;
+  //     }
+  //     break;
+  //   case 1: // Circle around object on right until IMU reads ~0 degrees
+  //     tugboat_state = 7; // Right ice circumnavigation
+  //     if ((sensors.imu.data > 350) && (sensors.imu.data < 360) || // Data wraps from 360 to 0
+  //         (sensors.imu.data > 0) && (sensors.imu.data < 10)) {
+  //       fig8state = 2;
+  //     }
+  //     break;
+  //   case 2: // Circle around object on left until IMU reads ~180
+  //     tugboat_state = 6; // Left ice circumnavigation
+  //     if ((sensors.imu.data > 170) && (sensors.imu.data < 190) || // Data wraps from 360 to 0
+  //         (sensors.imu.data > 0) && (sensors.imu.data < 10)) {
+  //       fig8state = 3;
+  //     }
+  //     break;
+  //   default: // Stop robot TODO: remove this, currently here for testing
+  //     tugboat_state = 1;
+  //     break;
+  // }
 }
 void Missions::bwdFigureEight()
 {
+
+  // Undocks, follows right wall to 0 deg heading, then enter 8 loop.
+  // Infinite state loop switching between left and right object circling at 180 deg
+  switch(fig8state) {
+    case 0: // Undock and turn right
+      tugboat_state = 3; // turn out of dock to the right
+      if ((sensors.imu.data >  75) && (sensors.imu.data < 180)) { // turn only ~75 deg left
+        fig8state = 1;
+      }
+    case 1: // Follow right wall until IMU reads ~0 degrees
+      tugboat_state = 5; // right wall follow
+      if ((sensors.imu.data > 350) && (sensors.imu.data < 360) || // Data wraps from 360 to 0
+          (sensors.imu.data > 0) && (sensors.imu.data < 10)) {
+        fig8state = 2;
+      }
+      break;
+    case 2: // Circle around object on left until IMU reads ~180 degrees
+      tugboat_state = 6; // left ice circumnavigation
+      if ((sensors.imu.data > 170) && (sensors.imu.data < 190)) {
+        fig8state = 3;
+      }
+      break;
+    case 3: // Circle around object on right until IMU reads ~180 degrees
+      tugboat_state = 7; // right ice circumnavigation
+      if ((sensors.imu.data > 170) && (sensors.imu.data < 190)) {
+        fig8state = 2; // cycle back to circle the other iceberg
+      }
+      break;
+    default: // Stop robot TODO: remove this, currently here for testing
+      tugboat_state = 1;
+      break;
+  }
+
   //TODO: Remove test
   //tugboat_state = 5;
   /*
