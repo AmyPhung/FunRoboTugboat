@@ -87,7 +87,15 @@ void Tugboat::mission(int mission_num)
       Tugboat::missionTugboat();
       break;
     case 3:
-      missions.circleMission();
+      missions.lcircleMission();
+      Tugboat::missionTugboat();
+      break;
+    case 4:
+      missions.rcircleMission();
+      Tugboat::missionTugboat();
+      break;
+    case 5:
+      missions.chaseNarwhal();
       Tugboat::missionTugboat();
       break;
     default:
@@ -215,9 +223,17 @@ int Tugboat::classifyMission(String mission_cmd)
     missions.fig8state = 0; // Reset figure 8 progress
     return 2; // bwdFigureEight
   }
-  else if (mission_cmd == "51") { //2
+  else if (mission_cmd == "51") { //3
     missions.circleState = 0;
-    return 3; // circleMission
+    return 3; // lcircleMission
+  }
+  else if (mission_cmd == "52") { //4
+    missions.circleState = 0;
+    return 4; // rcircleMission
+  }
+  else if (mission_cmd == "53") { //5
+    missions.circleState = 0;
+    return 5; // chaseNarwhal
   }
   else {
     return 0; // stop

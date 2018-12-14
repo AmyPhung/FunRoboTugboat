@@ -18,9 +18,16 @@ class Missions
     int fig8state = 0; // Used for keeping track of current progress in figure 8
     void fwdFigureEight();
     void bwdFigureEight();
-    
+
     int circleState = 0;
-    void circleMission();
+    void lcircleMission();
+    void rcircleMission();
+
+    int chaseState = 0;
+    void chaseNarwhal();
+
+    // Supporting Functions
+    void wallFollow(int Kp, int Jp, int side, int dist_thresh, int front_ir, int back_ir);
 };
 
 #endif
