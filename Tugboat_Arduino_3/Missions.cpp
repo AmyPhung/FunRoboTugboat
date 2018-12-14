@@ -151,6 +151,7 @@ void Missions::fwdFigureEightAndDock()
   // Infinite state loop switching between right and left object circling at 180 deg
   // Identical to fwdFigureEight except case 7 is dock, and no case 8
   switch(fig8state) {
+    Serial.println(fig8state);
     case 0: // Undock and turn Left
       tugboat_state = 2; // Turn out of dock to the left
       if ((sensors.imu.data < 285) && (sensors.imu.data > 180)) { // turn only ~75 deg left

@@ -101,6 +101,7 @@ void Tugboat::mission(int mission_num)
     case 6:
       missions.fwdFigureEightAndDock();
       Tugboat::missionTugboat();
+      break;
     default:
       Tugboat::stop();
       break;
