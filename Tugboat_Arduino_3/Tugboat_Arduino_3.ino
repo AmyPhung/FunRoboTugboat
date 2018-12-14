@@ -95,6 +95,7 @@ void loop() {
       // Serial.println(tugboat.velocity);
       // Serial.println(tugboat.heading);
       if (tugboat.heading == 45) {XBee.write("Bang!\n");}
+      Serial.print("ir_5: "); Serial.println(tugboat.data.ir_5_data);
       //int ir_diff = tugboat.ir_0-tugboat.ir_1;
 //      int ir_avg = (tugboat.ir_0+tugboat.ir_1)/2;
 //      Serial.print("ir_avg: "); Serial.println(ir_avg);
@@ -220,6 +221,7 @@ int classifyCommand(String command) {
     tugboat.velocity = -25;
     return 14;
   }
+
   // TODO: add other states
   else {
     //    XBee.write(command);
