@@ -90,6 +90,10 @@ void Tugboat::mission(int mission_num)
       missions.circleMission();
       Tugboat::missionTugboat();
       break;
+    case 4:
+      missions.fwdFigureEightAndDock();
+      Tugboat::missionTugboat();
+      break;
     default:
       Tugboat::stop();
       break;
@@ -228,9 +232,13 @@ int Tugboat::classifyMission(String mission_cmd)
     missions.fig8state = 0; // Reset figure 8 progress
     return 2; // bwdFigureEight
   }
-  else if (mission_cmd == "51") { //2
+  else if (mission_cmd == "51") { //3
     missions.circleState = 0;
     return 3; // circleMission
+  }
+  else if (mission_cmd =="52") { //4
+    missions.fig8state = 0; // Reset figure 8 progress
+    return 4;
   }
   else {
     return 0; // stop

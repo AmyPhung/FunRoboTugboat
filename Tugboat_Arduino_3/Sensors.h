@@ -31,8 +31,8 @@ class Sensors
     IMU imu;
 
     // Store data from other arduinos
-    int narwhal_pos = 10000;
-    int dot_pos = 10000;
+    int narwhal_pos = 0;
+    int dot_pos = 0;
     int sonar_0_data = 0;
     int sonar_1_data = 0;
     int sonar_2_data = 0;

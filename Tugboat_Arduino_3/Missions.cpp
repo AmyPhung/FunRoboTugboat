@@ -205,6 +205,7 @@ void Missions::fwdFigureEightAndDock()
       tugboat_state = 1;
       break;
   }
+}
 
 
 
