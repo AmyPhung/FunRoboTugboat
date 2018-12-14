@@ -30,7 +30,7 @@ void Missions::fwdFigureEight()
       }
       break;
     case 3: // Start left circle until IMU reads ~300 deg
-      tugboat_state = 4;
+      tugboat_state = 6;
       if ((sensors.imu.data > 50) && (sensors.imu.data < 70)) { // Near 300 deg
         fig8state = 4;
       }
