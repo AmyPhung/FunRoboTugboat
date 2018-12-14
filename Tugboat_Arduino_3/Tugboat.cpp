@@ -103,19 +103,13 @@ void Tugboat::stop()
 }
 void Tugboat::lundock()
 {
-  //TODO: insert undock code here
-  velocity = -30;  // 7 seconds
-  heading = 45;
-  Tugboat::move();
-  delay(7000);
+  velocity = 20;
+  heading = -45;
 }
 void Tugboat::rundock()
 {
-  //TODO: insert undock code here
-  velocity = -30;  // 7 seconds
-  heading = -45;
-  Tugboat::move();
-  delay(7000);
+  velocity = 20;
+  heading = 45;
 }
 void Tugboat::wallFollow(int Kp, int Jp, int side)
 {
