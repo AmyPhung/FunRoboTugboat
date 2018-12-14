@@ -31,15 +31,15 @@ void Missions::fwdFigureEight()
       break;
     case 3: // Go straight until IRs see an approaching wall
       tugboat_state = -1; // Override
-      cmd_heading = 0; // Go straight
+      cmd_heading = -5; // Go slight angle left
       cmd_velocity = 14;
-      if ((sensors.ir_2.data < 110) || (sensors.ir_3.data < 110)) { // When front wall is close
+      if ((sensors.ir_2.data < 140) || (sensors.ir_3.data < 140)) { // When front wall is close
         fig8state = 4;
       }
       break;
     case 4: // Start left circle until IMU reads ~60 deg (60 away from straight)
       tugboat_state = 6; // Circle on the left
-      if ((sensors.imu.data > 50) && (sensors.imu.data < 70)) { // Near 60 deg
+      if ((sensors.imu.data > 20) && (sensors.imu.data < 30)) { // Near 60 deg
         fig8state = 5;
       }
       break;
@@ -57,15 +57,15 @@ void Missions::fwdFigureEight()
       break;
     case 7: // Go staight until IRs see a wall approaching
       tugboat_state = -1; // Override
-      cmd_heading = 0; // Go straight
+      cmd_heading = 5; // Go slight angle right
       cmd_velocity = 14;
-      if ((sensors.ir_2.data < 110) || (sensors.ir_3.data < 110)) { // When front wall is close
+      if ((sensors.ir_2.data < 140) || (sensors.ir_3.data < 140)) { // When front wall is close
         fig8state = 8;
       }
       break;
     case 8: // Start right circle until IMU reads ~300 deg (60 away from straight)
       tugboat_state = 7; // Right circle
-      if ((sensors.imu.data > 290) && (sensors.imu.data < 310)) {
+      if ((sensors.imu.data > 320) && (sensors.imu.data < 340)) {
         fig8state = 1; // cycle back to left wall follow, then circle the other way
       }
       break;
