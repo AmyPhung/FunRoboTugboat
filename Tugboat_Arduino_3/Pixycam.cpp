@@ -28,7 +28,7 @@ void Pixycam::update()
 int Pixycam::dotLocation()
 {
   int i;
-  int reddot = 10000;
+  int reddot = 0;
 
   pixy.ccc.getBlocks(); // grab blocks
 
@@ -46,7 +46,7 @@ int Pixycam::dotLocation()
 int Pixycam::narwhalLocation()
 {
   int i;
-  int narwhal = 10000;
+  int narwhal = 0;
 
   pixy.ccc.getBlocks(); // grab blocks!
 

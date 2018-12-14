@@ -21,6 +21,8 @@ void Sensors::init()
     ir_5.init();
 
     imu.init();
+
+    pixycam.init();
 }
 
 void Sensors::print()
@@ -36,12 +38,12 @@ void Sensors::print()
   Serial.println("IMU Info:");
   Serial.print("IMU data: "); Serial.println(imu.data);
   Serial.println("");
-  Serial.println("Imported Data:");
-  Serial.print("Narwhal Position: "); Serial.println(narwhal_pos);
-  Serial.print("Dot Position: "); Serial.println(dot_pos);
-  Serial.print("Sonar 0 data: "); Serial.println(sonar_0_data);
-  Serial.print("Sonar 1 data: "); Serial.println(sonar_1_data);
-  Serial.print("Sonar 2 data: "); Serial.println(sonar_2_data);
+  Serial.println("Pixy Data:");
+  Serial.print("Narwhal Position: "); Serial.println(pixycam.narwhal_pos);
+  Serial.print("Dot Position: "); Serial.println(pixycam.dot_pos);
+  // Serial.print("Sonar 0 data: "); Serial.println(sonar_0_data);
+  // Serial.print("Sonar 1 data: "); Serial.println(sonar_1_data);
+  // Serial.print("Sonar 2 data: "); Serial.println(sonar_2_data);
 }
 
 void Sensors::update(RECIEVE_DATA_STRUCTURE sensedata)
@@ -55,9 +57,9 @@ void Sensors::update(RECIEVE_DATA_STRUCTURE sensedata)
 
     imu.update();
 
-    narwhal_pos = sensedata.narwhal_pos;
-    dot_pos = sensedata.dot_pos;
-    sonar_0_data = sensedata.sonar_0_data;
-    sonar_1_data = sensedata.sonar_1_data;
-    sonar_2_data = sensedata.sonar_2_data;
+    pixycam.update();
+
+    // sonar_0_data = sensedata.sonar_0_data;
+    // sonar_1_data = sensedata.sonar_1_data;
+    // sonar_2_data = sensedata.sonar_2_data;
 }

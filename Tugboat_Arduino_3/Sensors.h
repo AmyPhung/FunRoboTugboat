@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "IR.h"
 #include "IMU.h"
+#include "Pixycam.h"
 #include "ArduinoComms3.h" // Needed for RECEIVE_DATA_STRUCTURE
 
 #define IR0PIN 6
@@ -30,9 +31,11 @@ class Sensors
 
     IMU imu;
 
+    Pixycam pixycam;
+
     // Store data from other arduinos
-    int narwhal_pos = 10000;
-    int dot_pos = 10000;
+    int narwhal_pos = 0;
+    int dot_pos = 0;
     int sonar_0_data = 0;
     int sonar_1_data = 0;
     int sonar_2_data = 0;
