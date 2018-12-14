@@ -83,6 +83,9 @@ void loop() {
     if (newLoopTime - oldLoopTime >= controlLoopInterval) { // if true run flight code
       oldLoopTime = newLoopTime;          // reset time stamp
 
+      // debugging weird docking behaviour
+      Serial.print("mission: "); Serial.print(tugboat.mission_state); Serial.print(" ... state: "); Serial.println(tugboat.state);
+
       //SENSE
       // get sensor data from Arduino 2
       SENSING.receiveData();

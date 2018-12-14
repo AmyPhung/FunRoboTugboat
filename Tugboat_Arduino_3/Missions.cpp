@@ -16,6 +16,7 @@ void Missions::fwdFigureEight()
       if ((sensors.imu.data < 285) && (sensors.imu.data > 180)) { // turn only ~75 deg left
         fig8state = 1;
       }
+      break;
     case 1: // Follow left wall until IMU reads ~0 degrees
       tugboat_state = 4; // Left wall follow
       if ((sensors.imu.data > 350) && (sensors.imu.data < 360) || // Data wraps from 360 to 0
