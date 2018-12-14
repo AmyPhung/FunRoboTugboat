@@ -197,7 +197,7 @@ void Tugboat::circleIce(int side) // circle iceberg
 void Tugboat::dock()
 {
   velocity = 15;
-  heading = sensors.dot_pos; // TODO: tune this
+  heading = sensors.pixycam.dot_pos; // TODO: tune this
 }
 void Tugboat::placeholder2()
 {
