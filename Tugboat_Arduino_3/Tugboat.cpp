@@ -40,10 +40,10 @@ void Tugboat::stateController(int cmd_state) {
               rundock();
               break;
       case 4: Serial.println("Robot State: lwall");
-              wallFollow(8, 8, 0); //Kp, Jp, side
+              wallFollow(8, 8, 0); //Kp, Jp, left side
               break;
       case 5: Serial.println("Robot State: rwall");
-              wallFollow(8, 8, 1); //Kp, Jp, side
+              wallFollow(8, 8, 1); //Kp, Jp, right side
               break;
       case 6: Serial.println("Robot State: leftIce");
               circleIce(0); //circumnavigate an object on left of boat
@@ -59,11 +59,11 @@ void Tugboat::stateController(int cmd_state) {
               break;
 
       //TELEOP COMMANDS
-      case 10: break;
-      case 11: break;
-      case 12: break;
-      case 13: break;
-      case 14: break;
+      case 10: break; // forward at 20
+      case 11: break; // more left by 10
+      case 12: break; // stop
+      case 13: break; // more right by 10
+      case 14: break; // back at -25
 
       default: Serial.println("Robot State: stop *WARNING* Invalid Input");
               stop();
@@ -163,36 +163,11 @@ void Tugboat::circleIce(int side) // circle iceberg
   int front_ir, back_ir;
   int s = 0; // Used for changing sign of constants for left/right use
 
-  if (side == 0) { // Use left sensors for left wall follow
-    Serial.println("Left following");
-    front_ir = sensors.ir_1.data;
-    back_ir = sensors.ir_0.data;
-    s = -1;
-  } else if (side == 1) { // Use right sensors for right wall follow
-    Serial.println("Right following");
-    front_ir = sensors.ir_2.data;
-    back_ir = sensors.ir_3.data;
-    s = 1;
-  }
-  Serial.println(front_ir);
-  Serial.println(back_ir);
+  if (side == 0){s = -1;}
+  else if (side == 1){s = 1;}
 
-  // Front IR, Back IR, Sonar
-  //int dist_thresh = 30; // Desired distance to stay away from iceberg
-
-  if (back_ir < threshold) {
-    heading = s*default_heading + s*20;
-  } else if (front_ir < threshold) {
-    heading = s*default_heading - s*10;
-  } else {
-    heading = s*default_heading;
-  }
-  velocity = 15;
-  /*
-
-  if back ir is triggered then need to turn sharper too far back
-  if front ir is triggered then need to turn less sharp
-  */
+  heading = s*45;
+  velocity = 14;
 }
 void Tugboat::dock()
 {
@@ -215,9 +190,9 @@ int Tugboat::classifyMission(String mission_cmd)
     missions.fig8state = 0; // Reset figure 8 progress
     return 2; // bwdFigureEight
   }
-  else if (mission_cmd == "51") { //2
+  else if (mission_cmd = "51"){ //3
     missions.circleState = 0;
-    return 3; // circleMission
+    return 3; //circle mission
   }
   else {
     return 0; // stop
@@ -281,7 +256,8 @@ void Tugboat::setHeading(int degHeading) // Input heading in degrees
 
 
 // PRIVATE FUNCTIONS
-float Tugboat::computeWallDistance(int front_ir, int back_ir, int sensor_dist) {
+float Tugboat::computeWallDistance(int front_ir, int 
+                                   , int sensor_dist) {
   int z = (front_ir + back_ir)/2; // Average distance between IRs
   // float theta;
   //

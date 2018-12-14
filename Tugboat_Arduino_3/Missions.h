@@ -16,9 +16,10 @@ class Missions
 
     // Figure 8
     int fig8state = 0; // Used for keeping track of current progress in figure 8
+    int circleState = 0; // Used for keeping track of current progress in circle
     void fwdFigureEight();
     void bwdFigureEight();
-    
+
     int circleState = 0;
     void circleMission();
 };

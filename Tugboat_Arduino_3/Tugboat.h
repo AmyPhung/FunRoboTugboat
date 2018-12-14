@@ -67,8 +67,6 @@ class Tugboat
 
   private:
     float computeWallDistance(int front_ir, int back_ir, int sensor_dist);
-
-
 };
 
 #endif
