@@ -7,7 +7,7 @@ Missions::Missions()
 
 // Main Mission Functions
 void Missions::fwdFigureEight()
-{ // TODO: Document angles - currently assumes boat starts facing away from ice
+{
   // Undocks, follows left wall to 0 deg heading, then enter 8 loop.
   // Infinite state loop switching between right and left object circling at 180 deg
   switch(fig8state) {
@@ -25,20 +25,32 @@ void Missions::fwdFigureEight()
       break;
     case 2: // Finish the right circle until IMU reads ~180 deg
       tugboat_state = 7; // Right ice circle
-      if ((sensors.imu.data > 140) && (sensors.imu.data < 160)) {
+      if ((sensors.imu.data > 140) && (sensors.imu.data < 160)) { // Near 150 deg
         fig8state = 3;
       }
       break;
-    case 3: // Wall follow on the right until IMU reads ~0 degrees
-      tugboat_state = 5; // Right wall follow
-      if ((sensors.imu.data > 0) && (sensors.imu.data < 20)) { // Early near 10 deg, approaching from positive (heading decreasing)
+    case 3: // Start left circle until IMU reads ~300 deg
+      tugboat_state = 4;
+      if ((sensors.imu.data > 50) && (sensors.imu.data < 70)) { // Near 300 deg
         fig8state = 4;
       }
       break;
-    case 4: // Finish the left circle until IMU reads ~180 deg
+    case 4: // Wall follow on the right until IMU reads ~0 degrees
+      tugboat_state = 5; // Right wall follow
+      if ((sensors.imu.data > 0) && (sensors.imu.data < 20)) { // Early near 10 deg, approaching from positive (heading decreasing)
+        fig8state = 5;
+      }
+      break;
+    case 5: // Finish the left circle until IMU reads earlier than ~180 deg
       tugboat_state = 6; // Left ice circle
       if ((sensors.imu.data > 200) && (sensors.imu.data < 220)) {
-        fig8state = 1; // cycle back to wall follow, then circle the other way
+        fig8state = 6;
+      }
+      break;
+    case 6: // Start right circle until IMU reads ~ deg
+      tugboat_state = 7; // Right circle
+      if ((sensors.imu.data > 290) && (sensors.imu.data < 310)) {
+        fig8state = 1; // cycle back to left wall follow, then circle the other way
       }
       break;
     default: // Stop robot TODO: remove this, currently here for testing
