@@ -19,9 +19,9 @@ void Missions::fwdFigureEight()
       break;
     case 1: // Follow left wall until IMU reads ~0 degrees
       tugboat_state = 4; // Left wall follow
-      if ((sensors.imu.data > 350) && (sensors.imu.data < 360) || // Data wraps from 360 to 0
-          (sensors.imu.data > 0) && (sensors.imu.data < 10)) {
+      if ((sensors.imu.data > 340) && (sensors.imu.data < 360)) {
         fig8state = 3;
+       // TODO: Trigger sooner
       }
       break;
     // case 2: // Start to circle around object on right until IMU reads ~0 degrees
@@ -219,7 +219,6 @@ void Missions::circleMission()
       tugboat_state = 4; //left wall follow
       if ((sensors.imu.data < 200) //check to see we've turned far enough
            && (sensors.imu.data > 180))
-      // TODO: Trigger sooner
       {
         circleState = 2; //switch to next state
       }

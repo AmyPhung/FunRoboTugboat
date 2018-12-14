@@ -168,7 +168,7 @@ void Tugboat::circleIce(int side) // circle iceberg
   }
 
   heading = s*45; // Bang to full turn
-  velocity = 14; // Go slow
+  velocity = 20; // Go decent speed for larger circle
 
   // int default_heading = 30; // Heading that allows perfect circumnavigation
   // int threshold = 80; // IR reading that constitutes an iceberg
