@@ -40,10 +40,10 @@ void Tugboat::stateController(int cmd_state) {
               rundock();
               break;
       case 4: Serial.println("Robot State: lwall");
-              wallFollow(8, 8, 0); //Kp, Jp, side
+              wallFollow(8, 8, 0, 30); //Kp, Jp, side, dist_thresh
               break;
       case 5: Serial.println("Robot State: rwall");
-              wallFollow(8, 8, 1); //Kp, Jp, side
+              wallFollow(8, 8, 1, 30); //Kp, Jp, side, dist_thresh
               break;
       case 6: Serial.println("Robot State: leftIce");
               circleIce(0); //circumnavigate an object on left of boat
@@ -111,15 +111,15 @@ void Tugboat::rundock()
   velocity = 20;
   heading = 45;
 }
-void Tugboat::wallFollow(int Kp, int Jp, int side)
+void Tugboat::wallFollow(int Kp, int Jp, int side, int dist_thresh)
 {
   /*
   Inputs:
   Kp - proportional control constant for heading
   Jp - proportional control constant for distance
   side - which side to wall follow on. 0 For left, 1 for right
+  dist_thresh - desired distance to stay away from wall in cm
   */
-  int dist_thresh = 30; // Desired distance to stay away from wall
 
   int front_ir, back_ir;
 

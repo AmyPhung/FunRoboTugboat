@@ -52,7 +52,7 @@ class Tugboat
     void stop();
     void lundock();
     void rundock();
-    void wallFollow(int Kp, int Jp, int side);
+    void wallFollow(int Kp, int Jp, int side, int dist_thresh);
     void circleIce(int side);
     void dock();
     void placeholder2();
