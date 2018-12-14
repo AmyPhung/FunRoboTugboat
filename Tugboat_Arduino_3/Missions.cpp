@@ -120,4 +120,41 @@ switch(fig8state) {
 
 }
 
+void Missions::circleMission()
+{ // TODO: Document angles - currently assumes boat starts facing away from ice
+  switch(circleState) {
+    case 0: // Follow left wall until IMU reads ~180 degrees
+      tugboat_state = 2; // turn out of dock
+      if ((sensors.imu_0.data < 285)
+           && (sensors.imu_0.data > 180)) // if you've turned 75 degrees left
+      {
+        circleState = 1; //switch to next state
+      }
+      break;
+    case 1: // Circle around object on right until IMU reads ~0 degrees
+      tugboat_state = 4; //left wall follow
+      if ((sensors.imu_0.data < 270) //check to see we've turned far enough
+           && (sensors.imu_0.data > 90)
+           && (sensors.ir_5.data <100)) //if iceberg spotted on right
+      {
+        circleState = 2; //switch to next state
+      }
+      break;
+    case 2: // Circle around object on left until IMU reads ~180
+      tugboat_state = 7; // circle iceberg on right
+      if ((sensors.imu_0.data > 250) && (sensors.imu_0.data < 290))
+      {
+        circleState = 3;
+      }
+      break;
+    case 3:
+    tugboat_state = 8; // straighten out cross finish line
+    break;
+    default: // Stop robot TODO: remove this, currently here for testing
+      tugboat_state = 1;
+      break;
+  }
+}
+
+
 // Supporting Functions
