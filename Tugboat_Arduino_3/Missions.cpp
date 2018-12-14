@@ -19,35 +19,25 @@ void Missions::fwdFigureEight()
       break;
     case 1: // Follow left wall until IMU reads ~0 degrees
       tugboat_state = 4; // Left wall follow
-      if ((sensors.imu.data > 340) && (sensors.imu.data < 360)) {
-        fig8state = 3;
-       // TODO: Trigger sooner
+      if ((sensors.imu.data > 340) && (sensors.imu.data < 360)) { // Early along approach to 360 deg from negative (heading increasing)
+        fig8state = 2;
       }
       break;
-    // case 2: // Start to circle around object on right until IMU reads ~0 degrees
-    //   tugboat_state = 7; // Right ice circumnavigation
-    //   if ((sensors.imu.data > 350) && (sensors.imu.data < 360) || // Data wraps from 360 to 0
-    //       (sensors.imu.data > 0) && (sensors.imu.data < 10)) {
-    //   // if ((sensors.imu.data > 170) && (sensors.imu.data < 190)) {
-    //     fig8state = 3;
-    //   }
-    //   break;
-    case 3: // Finish the right circle until IMU reads ~180 deg
+    case 2: // Finish the right circle until IMU reads ~180 deg
       tugboat_state = 7; // Right ice circle
-      if ((sensors.imu.data > 170) && (sensors.imu.data < 190)) {
+      if ((sensors.imu.data > 140) && (sensors.imu.data < 160)) {
+        fig8state = 3;
+      }
+      break;
+    case 3: // Wall follow on the right until IMU reads ~0 degrees
+      tugboat_state = 5; // Right wall follow
+      if ((sensors.imu.data > 0) && (sensors.imu.data < 20)) { // Early near 10 deg, approaching from positive (heading decreasing)
         fig8state = 4;
       }
       break;
-    case 4: // Start circle around object on left until IMU reads ~0 degrees
-      tugboat_state = 6; // Left ice circumnavigation
-      if ((sensors.imu.data > 350) && (sensors.imu.data < 360) || // Data wraps from 360 to 0
-          (sensors.imu.data > 0) && (sensors.imu.data < 10)) {
-        fig8state = 5;
-      }
-      break;
-    case 5: // Finish the left circle until IMU reads ~180 deg
+    case 4: // Finish the left circle until IMU reads ~180 deg
       tugboat_state = 6; // Left ice circle
-      if ((sensors.imu.data > 170) && (sensors.imu.data < 190)) {
+      if ((sensors.imu.data > 200) && (sensors.imu.data < 220)) {
         fig8state = 1; // cycle back to wall follow, then circle the other way
       }
       break;
