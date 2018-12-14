@@ -98,6 +98,9 @@ void Tugboat::mission(int mission_num)
       missions.chaseNarwhal();
       Tugboat::missionTugboat();
       break;
+    case 6:
+      missions.fwdFigureEightAndDock();
+      Tugboat::missionTugboat();
     default:
       Tugboat::stop();
       break;
@@ -232,8 +235,11 @@ int Tugboat::classifyMission(String mission_cmd)
     return 4; // rcircleMission
   }
   else if (mission_cmd == "53") { //5
-    missions.circleState = 0;
     return 5; // chaseNarwhal
+  }
+  else if (mission_cmd == "54") { //6
+    missions.fig8state = 0; // Reset figure 8 progress
+    return 6; // fwdFigureEight and dock
   }
   else {
     return 0; // stop
