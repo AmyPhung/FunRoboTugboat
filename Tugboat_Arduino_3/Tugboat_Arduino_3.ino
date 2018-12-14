@@ -12,7 +12,7 @@
 // Provides RECIEVE_DATA_STRUCTURE for Arduino comms
 #include "ArduinoComms3.h"
 
-SoftwareSerial XBee(2, 3); // RX, TX
+SoftwareSerial XBee(2,3); // RX, TX
 
 #include "Tugboat.h"
 
@@ -60,7 +60,6 @@ void setup() {
 
 void loop() {
 
-  tugboat.velocity = 0;
   // Get operator input from serial monitor
   XBee.write("Input Command\n");
   command = getOperatorInput();
@@ -95,7 +94,7 @@ void loop() {
       // Serial.println(tugboat.velocity);
       // Serial.println(tugboat.heading);
       if (tugboat.heading == 45) {XBee.write("Bang!\n");}
-      Serial.print("ir_5: "); Serial.println(tugboat.data.ir_5_data);
+      Serial.print("imu_0_data: "); Serial.println(tugboat.data.imu_0_data);
       //int ir_diff = tugboat.ir_0-tugboat.ir_1;
 //      int ir_avg = (tugboat.ir_0+tugboat.ir_1)/2;
 //      Serial.print("ir_avg: "); Serial.println(ir_avg);

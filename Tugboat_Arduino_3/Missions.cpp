@@ -48,16 +48,15 @@ void Missions::circleMission()
       break;
     case 1: // Circle around object on right until IMU reads ~0 degrees
       tugboat_state = 4; //left wall follow
-      if ((data.imu_0_data < 270) //check to see we've turned far enough
-           && (data.imu_0_data > 90)
-           && (data.ir_5_data <100)) //if iceberg spotted on right
+      if ((data.imu_0_data < 220) //check to see we've turned far enough
+           && (data.imu_0_data > 200)) //if orientation is right
       {
         circleState = 2; //switch to next state
       }
       break;
     case 2: // Circle around object on left until IMU reads ~180
       tugboat_state = 7; // circle iceberg on right
-      if ((data.imu_0_data > 250) && (data.imu_0_data < 290))
+      if ((data.imu_0_data > 260) && (data.imu_0_data < 290))
       {
         circleState = 3;
       }
