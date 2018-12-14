@@ -267,13 +267,18 @@ void Missions::rcircleMission()
 
 void Missions::chaseNarwhal()
 {
-  int obj_thresh = 50; // For obstacle avoidance
-  int dist_thresh = 50; // For wall following
-  if (sensors.pixycam.narwhal_pos != 0) { // We assume the narwhal is never truly centered
+  //int obj_thresh = 50; // For obstacle avoidance
+  int dist_thresh = 70; // For wall following
+
+  int l_ir = sensors.ir_2.data;
+  int r_ir = sensors.ir_3.data;
+
+  if (sensors.pixycam.dot_pos != 0) { // We assume the narwhal is never truly centered
     tugboat_state = -1;
-    cmd_heading = sensors.pixycam.narwhal_pos;
+    cmd_heading = sensors.pixycam.dot_pos;
     cmd_velocity = 14;
-  } else {
+  }
+  else {
     tugboat_state = -1;
     int l_avg = (sensors.ir_1.data + sensors.ir_0.data)/2;
     int r_avg = (sensors.ir_4.data + sensors.ir_5.data)/2;
@@ -284,19 +289,18 @@ void Missions::chaseNarwhal()
       wallFollow(8,8,1,dist_thresh,sensors.ir_4.data,sensors.ir_5.data); // Kp, Jp, side, dist_thresh, front_ir, back_ir
     };
 
-    int l_ir = sensors.ir_2.data;
-    int r_ir = sensors.ir_3.data;
 
-    if ((l_ir < obj_thresh) || (r_ir < obj_thresh)){
-      if (r_ir < l_ir) {
-        cmd_heading = -45;
-      } else if (r_ir > l_ir) {
-        cmd_heading = 45;
-      } else { // Unlikely case of facing something head-on - pick one at random
-        cmd_heading = 45;
-      }
-    }
-    cmd_velocity = 14;
+
+    // if ((l_ir < obj_thresh) || (r_ir < obj_thresh)){
+    //   if (r_ir < l_ir) {
+    //     cmd_heading = -45;
+    //   } else if (r_ir > l_ir) {
+    //     cmd_heading = 45;
+    //   } else { // Unlikely case of facing something head-on - pick one at random
+    //     cmd_heading = 45;
+    //   }
+    // }
+    // cmd_velocity = 14;
 
   };
 }
