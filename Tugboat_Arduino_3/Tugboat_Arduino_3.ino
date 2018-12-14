@@ -16,8 +16,8 @@
 
 #include "Tugboat.h"
 
-#define PROPELLORPIN 9;
-#define RUDDERPIN 10;
+#define PROPELLORPIN 5;
+#define RUDDERPIN 6;
 
 Tugboat tugboat;
 

@@ -70,8 +70,8 @@ void loop() {
     sonar_2.update();
 
     sonar_0.print();
-    sonar_0.print();
-    sonar_0.print();
+    sonar_1.print();
+    sonar_2.print();
 
     sensedata.timestamp2 = millis();
     sensedata.sonar_0_data = sonar_0.data;

@@ -216,6 +216,7 @@ int Tugboat::classifyMission(String mission_cmd)
     return 2; // bwdFigureEight
   }
   else if (mission_cmd == "51") { //2
+    missions.circleState = 0;
     return 3; // circleMission
   }
   else {

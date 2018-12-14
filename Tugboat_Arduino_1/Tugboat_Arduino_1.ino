@@ -43,6 +43,7 @@ void loop() {
     pixydata.timestamp1 = millis();
     PIXY.sendData();
 
+    pixycam.update();
     pixycam.print();
   }
   // ---------------------REAL TIME CONTROL LOOP ENDS HERE -------------------------

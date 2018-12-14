@@ -39,6 +39,7 @@ int Pixycam::dotLocation()
       }
     }
   }
+  // Serial.println(reddot);
   return reddot;
 }
 
