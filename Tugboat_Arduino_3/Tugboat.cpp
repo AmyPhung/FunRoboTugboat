@@ -157,42 +157,55 @@ void Tugboat::circleIce(int side) // circle iceberg
   Inputs:
   side - which side obstacle is on follow on. 0 For left, 1 for right
   */
-  int default_heading = 30; // Heading that allows perfect circumnavigation
-  int threshold = 80; // IR reading that constitutes an iceberg
 
-  int front_ir, back_ir;
-  int s = 0; // Used for changing sign of constants for left/right use
+  int s;
 
-  if (side == 0) { // Use left sensors for left wall follow
-    Serial.println("Left following");
-    front_ir = sensors.ir_1.data;
-    back_ir = sensors.ir_0.data;
+  if (side == 0) { // Left
     s = -1;
-  } else if (side == 1) { // Use right sensors for right wall follow
-    Serial.println("Right following");
-    front_ir = sensors.ir_2.data;
-    back_ir = sensors.ir_3.data;
+  }
+  else if (side == 1) { // Right
     s = 1;
   }
-  Serial.println(front_ir);
-  Serial.println(back_ir);
 
-  // Front IR, Back IR, Sonar
-  //int dist_thresh = 30; // Desired distance to stay away from iceberg
+  heading = s*45; // Bang to full turn
+  velocity = 14; // Go slow
 
-  if (back_ir < threshold) {
-    heading = s*default_heading + s*20;
-  } else if (front_ir < threshold) {
-    heading = s*default_heading - s*10;
-  } else {
-    heading = s*default_heading;
-  }
-  velocity = 15;
-  /*
-
-  if back ir is triggered then need to turn sharper too far back
-  if front ir is triggered then need to turn less sharp
-  */
+  // int default_heading = 30; // Heading that allows perfect circumnavigation
+  // int threshold = 80; // IR reading that constitutes an iceberg
+  //
+  // int front_ir, back_ir;
+  // int s = 0; // Used for changing sign of constants for left/right use
+  //
+  // if (side == 0) { // Use left sensors for left wall follow
+  //   Serial.println("Left following");
+  //   front_ir = sensors.ir_1.data;
+  //   back_ir = sensors.ir_0.data;
+  //   s = -1;
+  // } else if (side == 1) { // Use right sensors for right wall follow
+  //   Serial.println("Right following");
+  //   front_ir = sensors.ir_2.data;
+  //   back_ir = sensors.ir_3.data;
+  //   s = 1;
+  // }
+  // Serial.println(front_ir);
+  // Serial.println(back_ir);
+  //
+  // // Front IR, Back IR, Sonar
+  // //int dist_thresh = 30; // Desired distance to stay away from iceberg
+  //
+  // if (back_ir < threshold) {
+  //   heading = s*default_heading + s*20;
+  // } else if (front_ir < threshold) {
+  //   heading = s*default_heading - s*10;
+  // } else {
+  //   heading = s*default_heading;
+  // }
+  // velocity = 15;
+  // /*
+  //
+  // if back ir is triggered then need to turn sharper too far back
+  // if front ir is triggered then need to turn less sharp
+  // */
 }
 void Tugboat::dock()
 {

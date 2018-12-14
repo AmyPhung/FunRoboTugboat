@@ -219,6 +219,7 @@ void Missions::circleMission()
       tugboat_state = 4; //left wall follow
       if ((sensors.imu.data < 200) //check to see we've turned far enough
            && (sensors.imu.data > 180))
+      // TODO: Trigger sooner
       {
         circleState = 2; //switch to next state
       }
