@@ -25,7 +25,7 @@ void Missions::fwdFigureEight()
       break;
     case 2: // Finish the right circle until IMU reads ~30 deg off straight
       tugboat_state = 7; // Right ice circle
-      if ((sensors.imu.data > 110) && (sensors.imu.data < 130)) { // Near 120 deg
+      if ((sensors.imu.data > 130) && (sensors.imu.data < 150)) { // Near 140 deg
         fig8state = 3;
       }
       break;
@@ -33,7 +33,7 @@ void Missions::fwdFigureEight()
       tugboat_state = -1; // Override
       cmd_heading = 0; // Go straight
       cmd_velocity = 14;
-      if ((data.ir_2_data < 70) || (data.ir_3_data < 70)) { // When front wall is close
+      if ((sensors.ir_2.data < 110) || (sensors.ir_3.data < 110)) { // When front wall is close
         fig8state = 4;
       }
       break;
@@ -49,17 +49,17 @@ void Missions::fwdFigureEight()
         fig8state = 6;
       }
       break;
-    case 6: // Finish the left circle until IMU reads  ~240 deg
+    case 6: // Finish the left circle until IMU reads  ~220 deg
       tugboat_state = 6; // Left ice circle
-      if ((sensors.imu.data > 230) && (sensors.imu.data < 250)) {
+      if ((sensors.imu.data > 210) && (sensors.imu.data < 230)) { //Near 220 deg
         fig8state = 7;
       }
       break;
-    case 7; // Go staight until IRs see a wall approaching
+    case 7: // Go staight until IRs see a wall approaching
       tugboat_state = -1; // Override
       cmd_heading = 0; // Go straight
       cmd_velocity = 14;
-      if ((data.ir_2_data < 70) || (data.ir_3_data < 70)) { // When front wall is close
+      if ((sensors.ir_2.data < 110) || (sensors.ir_3.data < 110)) { // When front wall is close
         fig8state = 8;
       }
       break;
