@@ -8,11 +8,18 @@
 #include <EasyTransfer.h>
 // Provides RECEIVE_DATA_STRUCTURE and SEND_DATA_STRUCTURE for Arduino comms
 #include "ArduinoComms2.h"
-// Provides Sensors object to collect and process sensor data
-#include "Sensors.h"
+// Library for interfacing with Sonars
+#include "Sonar.h"
 
-Sensors sensors;
-EasyTransfer PIXY; // arduino comms from Arrduino 1
+#define SONAR0PIN 11
+#define SONAR1PIN 12
+#define SONAR2PIN 13
+
+Sonar sonar_0;
+Sonar sonar_1;
+Sonar sonar_2;
+
+EasyTransfer PIXY; // arduino comms from Arduino 1
 EasyTransfer SENSORS; // arduino comms to Arduino 3
 
 //creating data structure
@@ -28,12 +35,17 @@ const long controlLoopInterval = 50; //create a name for control loop cycle time
 void setup() {
   Serial.begin(9600);
 
+  // Sonar initialization
+  sonar_0.pin = SONAR0PIN;
+  sonar_1.pin = SONAR1PIN;
+  sonar_2.pin = SONAR2PIN;
+  sonar_0.init();
+  sonar_1.init();
+  sonar_2.init();
+
   // arduino comms
   PIXY.begin(details(pixydata), &Serial);
   SENSORS.begin(details(sensedata), &Serial);
-
-  // for sensing
-  sensors.init();
 }
 
 void loop() {
@@ -48,34 +60,24 @@ void loop() {
     if (PIXY.receiveData()) {
       // update sensedata with new pixy data
       sensedata.timestamp1 = pixydata.timestamp1;
+      sensedata.narwhal_pos = pixydata.narwhal_pos;
+      sensedata.dot_pos = pixydata.dot_pos;
     }
 
+    // Update sonar data
+    sonar_0.update();
+    sonar_1.update();
+    sonar_2.update();
+
+    sonar_0.print();
+    sonar_1.print();
+    sonar_2.print();
+
     sensedata.timestamp2 = millis();
+    sensedata.sonar_0_data = sonar_0.data;
+    sensedata.sonar_1_data = sonar_1.data;
+    sensedata.sonar_2_data = sonar_2.data;
 
-    // THIS IS FOR ACTUALLY COLLECTING DATA AND WON'T BE USED UNTIL ARDUINO COMMS IS SUCCESSFUL
-    sensors.update();
-    sensors.print();
-
-    sensedata.ir_0_data =  sensors.ir_0.data;
-    sensedata.ir_1_data =  sensors.ir_1.data;
-    sensedata.ir_2_data =  sensors.ir_2.data;
-    sensedata.ir_3_data =  sensors.ir_3.data;
-    sensedata.ir_4_data =  sensors.ir_4.data;
-    sensedata.ir_5_data =  sensors.ir_5.data;
-
-    sensedata.sonar_0_data = sensors.sonar_0.data;
-    sensedata.sonar_1_data = sensors.sonar_1.data;
-    sensedata.sonar_2_data = sensors.sonar_2.data;
-
-//    Serial.println("------------------------------------------------------------------");
-//    Serial.print(sensedata.ir_0_data); Serial.print(" - "); Serial.print(sensedata.ir_1_data); Serial.print(" - ");
-//    Serial.print(sensedata.ir_2_data); Serial.print(" - "); Serial.print(sensedata.ir_3_data); Serial.print(" - ");
-//    Serial.print(sensedata.ir_4_data); Serial.print(" - "); Serial.print(sensedata.ir_5_data); Serial.print(" - ");
-//    Serial.print(sensedata.sonar_0_data); Serial.print(" - "); Serial.print(sensedata.sonar_1_data); Serial.print(" - ");
-//    Serial.println(sensedata.sonar_2_data);
-    // pass data along to next arduino
-    //Serial.println(sensedata.ir_5_data);
-    //Serial.println(sensedata.imu_0_data);
     SENSORS.sendData();
 
   } // ---------------------REAL TIME CONTROL LOOP ENDS HERE -------------------------

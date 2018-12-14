@@ -1,14 +1,14 @@
 #ifndef Missions_h
 #define Missions_h
 
-#include "ArduinoComms3.h"
+#include "Sensors.h"
 
 class Missions
 {
   public:
     Missions();
 
-    RECIEVE_DATA_STRUCTURE data;
+    Sensors sensors;
 
     int tugboat_state = 0; // Which robot state to be in - for manual control, set to -1
     int cmd_heading = 0;  // Turn in degrees
@@ -19,6 +19,8 @@ class Missions
     int circleState = 0; // Used for keeping track of current progress in circle
     void fwdFigureEight();
     void bwdFigureEight();
+
+    int circleState = 0;
     void circleMission();
 };
 

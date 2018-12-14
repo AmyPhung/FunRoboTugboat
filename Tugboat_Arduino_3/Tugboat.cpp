@@ -7,7 +7,7 @@ Tugboat::Tugboat()
 }
 
 void Tugboat::init() {
-  imu.init();
+  sensors.init();
 
   propellor.attach(propellorPin);
   propellor.writeMicroseconds(STOPPEDMICRO);
@@ -15,13 +15,8 @@ void Tugboat::init() {
   rudder.writeMicroseconds(STOPPEDMICRO);
 }
 
-void Tugboat::update(RECIEVE_DATA_STRUCTURE recieved_data) {
-  data = recieved_data;
-
-  imu.update();
-  data.imu_0_data = imu.data; // Comes onboard, not from Serial
-
-  //TODO: update state, commands, sensor data etc
+void Tugboat::update(RECIEVE_DATA_STRUCTURE sensedata) {
+  sensors.update(sensedata);
   stateController(state);
 }
 
@@ -56,8 +51,8 @@ void Tugboat::stateController(int cmd_state) {
       case 7: Serial.println("Robot State: rightIce");
               circleIce(1); //circumnavigate an object on right of boat
               break;
-      case 8: Serial.println("Robot State: straighten out");
-              straightenOut();
+      case 8: Serial.println("Robot State: dock");
+              dock();
               break;
       case 9: Serial.println("Robot State: placeholder2");
               placeholder2();
@@ -81,7 +76,7 @@ void Tugboat::stateController(int cmd_state) {
 // TODO: Each of these functions is its own "arbiter" (brain) that thinks with that state goal in mind
 void Tugboat::mission(int mission_num)
 {
-  missions.data = data; // Update mission data based tugboat data
+  missions.sensors = sensors; // Update mission data based tugboat data
   switch (mission_num) {
     case 1:
       missions.fwdFigureEight();
@@ -108,24 +103,13 @@ void Tugboat::stop()
 }
 void Tugboat::lundock()
 {
-  //TODO: insert undock code here
-  // velocity = -30;  // 7 seconds
-  // heading = 45;
-  // Tugboat::move();
-  // delay(7000);
-
   velocity = 20;
   heading = -45;
-  Serial.println("lundock");
 }
 void Tugboat::rundock()
 {
-  //TODO: insert undock code here
-  Serial.println("rundock");
-  velocity = -30;  // 7 seconds
-  heading = -45;
-  Tugboat::move();
-  delay(7000);
+  velocity = 20;
+  heading = 45;
 }
 void Tugboat::wallFollow(int Kp, int Jp, int side)
 {
@@ -140,11 +124,11 @@ void Tugboat::wallFollow(int Kp, int Jp, int side)
   int front_ir, back_ir;
 
   if (side == 0) { // Use left sensors for left wall follow
-    front_ir = data.ir_1_data;
-    back_ir = data.ir_0_data;
+    front_ir = sensors.ir_1.data;
+    back_ir = sensors.ir_0.data;
   } else if (side == 1) { // Use right sensors for right wall follow
-    front_ir = data.ir_4_data;
-    back_ir = data.ir_5_data;
+    front_ir = sensors.ir_2.data;
+    back_ir = sensors.ir_3.data;
   }
 
   int ir_dist = front_ir - dist_thresh;
@@ -173,48 +157,22 @@ void Tugboat::circleIce(int side) // circle iceberg
   Inputs:
   side - which side obstacle is on follow on. 0 For left, 1 for right
   */
-  // int default_heading = 30; // Heading that allows perfect circumnavigation
-  // int threshold = 50; // IR reading that constitutes an iceberg
-  //
-  // int front_ir, back_ir;
-  // int s = 0; // Used for changing sign of constants for left/right use
-  //
-  // if (side == 0) { // Use left sensors for left wall follow
-  //   front_ir = data.ir_1_data;
-  //   back_ir = data.ir_0_data;
-  //   s = -1;
-  // } else if (side == 1) { // Use right sensors for right wall follow
-  //   front_ir = data.ir_4_data;
-  //   back_ir = data.ir_5_data;
-  //   s = 1;
-  // }
-  //
-  // if (back_ir < threshold) {
-  //   heading = s*default_heading + s*20;
-  // }
-  // else if (front_ir < threshold) {
-  //   heading = s*default_heading - s*10;
-  // }
-  // else {
-  //   heading = s*default_heading;
-  // }
-  int s = 0;
+  int default_heading = 30; // Heading that allows perfect circumnavigation
+  int threshold = 80; // IR reading that constitutes an iceberg
+
+  int front_ir, back_ir;
+  int s = 0; // Used for changing sign of constants for left/right use
 
   if (side == 0){s = -1;}
   else if (side == 1){s = 1;}
 
   heading = s*45;
   velocity = 14;
-  /*
-
-  if back ir is triggered then need to turn sharper too far back
-  if front ir is triggered then need to turn less sharp
-  */
 }
-void Tugboat::straightenOut()
+void Tugboat::dock()
 {
-  velocity = 14;
-  heading = 0;
+  velocity = 15;
+  heading = sensors.dot_pos; // TODO: tune this
 }
 void Tugboat::placeholder2()
 {
@@ -298,7 +256,8 @@ void Tugboat::setHeading(int degHeading) // Input heading in degrees
 
 
 // PRIVATE FUNCTIONS
-float Tugboat::computeWallDistance(int front_ir, int back_ir, int sensor_dist) {
+float Tugboat::computeWallDistance(int front_ir, int 
+                                   , int sensor_dist) {
   int z = (front_ir + back_ir)/2; // Average distance between IRs
   // float theta;
   //

@@ -11,6 +11,9 @@ Includes data structure for communication between Arduino 1 and 2
 struct SEND_DATA_STRUCTURE
 {
   unsigned long timestamp1;
+
+  int narwhal_pos = 10000;
+  int dot_pos = 10000;
 };
 
 #endif

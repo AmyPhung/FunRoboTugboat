@@ -16,11 +16,9 @@ class Tugboat
     void move();
     void stateController(int state);
 
-    IMU imu; // Need to attach IMU object
-
     // Sensor data storage
-    RECIEVE_DATA_STRUCTURE data;
-    int imu_0;
+    Sensors sensors;
+
 
     int heading = 0;  // Turn in degrees
     int velocity = 0; // Between -100 and 100
@@ -56,7 +54,7 @@ class Tugboat
     void rundock();
     void wallFollow(int Kp, int Jp, int side);
     void circleIce(int side);
-    void straightenOut();
+    void dock();
     void placeholder2();
 
     // ACT
@@ -69,8 +67,6 @@ class Tugboat
 
   private:
     float computeWallDistance(int front_ir, int back_ir, int sensor_dist);
-
-
 };
 
 #endif
