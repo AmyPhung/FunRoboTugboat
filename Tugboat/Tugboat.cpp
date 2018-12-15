@@ -15,8 +15,8 @@ void Tugboat::init() {
   rudder.writeMicroseconds(STOPPEDMICRO);
 }
 
-void Tugboat::update(RECIEVE_DATA_STRUCTURE sensedata) {
-  sensors.update(sensedata);
+void Tugboat::update() {
+  sensors.update();
   stateController(state);
 }
 
@@ -72,7 +72,7 @@ void Tugboat::stateController(int cmd_state) {
 }
 
 // State Functions -----------------------------------------------------------
-// Each of these functions should modify heading and velocity 
+// Each of these functions should modify heading and velocity
 void Tugboat::mission(int mission_num)
 {
   missions.sensors = sensors; // Update mission data based tugboat data
