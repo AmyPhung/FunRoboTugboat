@@ -160,7 +160,7 @@ void Missions::fwdFigureEightAndDock()
       break;
     case 1: // Follow left wall until IMU reads ~0 degrees
       tugboat_state = 4; // Left wall follow
-      if ((sensors.imu.data > 340) && (sensors.imu.data < 360)) { // Early along approach to 360 deg from negative (heading increasing)
+      if ((sensors.imu.data > 330) && (sensors.imu.data < 360)) { // Early along approach to 360 deg from negative (heading increasing)
         fig8state = 2;
       }
       break;

@@ -5,14 +5,13 @@
 #include <Servo.h>
 #include "IMU.h" // Not on sense arduino since needs I2C, conflicts with IR
 #include "Missions.h" // Provides complex behaviors
-#include "ArduinoComms3.h"
 
 class Tugboat
 {
   public:
     Tugboat();
     void init();
-    void update(RECIEVE_DATA_STRUCTURE sensedata);
+    void update();
     void move();
     void stateController(int state);
 
